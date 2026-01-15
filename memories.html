@@ -11,13 +11,10 @@
     <!-- Musik Latar -->
     <section class="music-player">
         <audio id="bgMusic" autoplay loop>
-            <source src="audio/Raissa Anggiani - Losing Us..mp3" type="audio/mp3">
-            <source src="audio/Bruno Mars - Talking To The Moon Lyrics.mp3" type="audio/mp3">
+            <source src="audio/losingus.mp3" type="audio/mpeg">
             Browser kamu tidak mendukung audio.
         </audio>
     </section>
-
-
 
     <div class="overlay">
         <h1>picture Page</h1>
@@ -35,57 +32,103 @@
         <img id="lightbox-img" src="" alt="Preview">
     </div>
 
-
-
-
-
     <script>
-        const gallery = document.getElementById('gallery');
-        for (let i = 1; i <= 2001; i++) {
-            const img = new Image();
-            img.src = `../img/${i}.jpg`;
-            img.alt = `Photo ${i}`;
-            img.className = 'thumb';
-            img.onerror = () => img.remove(); // hapus kalau file tidak ada
-            img.addEventListener('click', () => {
-                document.getElementById('lightbox-img').src = img.src;
-                document.getElementById('lightbox').style.display = 'flex';
-            });
-            gallery.appendChild(img);
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const gallery = document.getElementById('gallery');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const closeBtn = document.querySelector('.close');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fileInput = document.getElementById('fileInput');
 
+            // --- PERUBAHAN UTAMA: Fungsi untuk memuat gambar dari daftar yang sudah diketahui ---
+            async function loadGalleryImages() {
+                // Buat daftar gambar berdasarkan struktur folder yang benar
+                const imagePaths = [];
 
-        document.querySelector('.close').addEventListener('click', () => {
-            document.getElementById('lightbox').style.display = 'none';
-        });
+                // Gambar dari img/set1/
+                for (let i = 1; i <= 999; i++) {
+                    imagePaths.push(`img/set1/${i}.jpg`);
+                }
+                for (let i = 1000; i <= 2000; i++) {
+                    imagePaths.push(`img/set1/${i}.jpg`);
+                }
 
-        // Tombol upload mengambang
-        const uploadBtn = document.getElementById('uploadBtn');
-        const fileInput = document.getElementById('fileInput');
+                // Gambar dari img/set2/
+                for (let i = 1003; i <= 1096; i++) {
+                    imagePaths.push(`img/set2/${i}.jpg`);
+                }
+                // Tambahkan gambar-gambar khusus dari set2
+                imagePaths.push('img/set2/2001.jpg');
+                imagePaths.push('img/set2/cover1.png');
 
-        uploadBtn.addEventListener('click', () => {
-            fileInput.click(); // buka dialog file
-        });
-
-        fileInput.addEventListener('change', (event) => {
-            const files = event.target.files;
-            for (const file of files) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    img.className = 'thumb';
-
-                    img.addEventListener('click', () => {
-                        document.getElementById('lightbox-img').src = img.src;
-                        document.getElementById('lightbox').style.display = 'flex';
-                    });
-
-                    gallery.appendChild(img);
-                };
-                reader.readAsDataURL(file);
+                // Periksa setiap path dan tambahkan ke galeri jika ada
+                for (const path of imagePaths) {
+                    try {
+                        const response = await fetch(path, { method: 'HEAD' });
+                        if (response.ok) {
+                            const img = new Image();
+                            img.src = path;
+                            img.alt = `Photo ${path.split('/').pop()}`;
+                            img.className = 'thumb';
+                            img.addEventListener('click', () => {
+                                lightboxImg.src = img.src;
+                                lightbox.style.display = 'flex';
+                            });
+                            gallery.appendChild(img);
+                        }
+                    } catch (error) {
+                        console.log(`Gambar tidak ditemukan: ${path}`);
+                    }
+                }
             }
+
+            // Panggil fungsi untuk memuat gambar saat halaman dimuat
+            loadGalleryImages();
+
+            // --- Event Listener yang sudah ada (tidak berubah) ---
+            closeBtn.addEventListener('click', () => {
+                lightbox.style.display = 'none';
+            });
+
+            // Klik di luar gambar untuk menutup lightbox
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                }
+            });
+
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (event) => {
+                const files = event.target.files;
+                for (const file of files) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.className = 'thumb';
+
+                        img.addEventListener('click', () => {
+                            lightboxImg.src = img.src;
+                            lightbox.style.display = 'flex';
+                        });
+
+                        gallery.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const bgMusic = document.getElementById('bgMusic');
+            document.body.addEventListener('click', () => {
+                bgMusic.play();
+            }, { once: true });
         });
     </script>
 </body>
