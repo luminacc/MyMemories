@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luminacc</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #fdf6f6;
+      font-family: sans-serif;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .bubble {
+      position: absolute;
+      white-space: nowrap;
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: rgba(255, 182, 193, 0.7);
+      color: #fff;
+      font-weight: bold;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes move-left {
+      from { transform: translateX(120vw); }
+      to { transform: translateX(-120vw); }
+    }
+
+    @keyframes move-right {
+      from { transform: translateX(-120vw); }
+      to { transform: translateX(120vw); }
+    }
+  </style>
+
+</head>
+<body>
+  <main class="hero">
+    <h1 class="greeting">Happy Day When We Meet and Be Together ❤❤</h1>
+    <p class="date">January 19, 2025</p>
+    <div class="cards">
+      <a href="memories.html" class="card">My pitcure</a>
+      <a href="mypicture.html" class="card">Memories</a>
+      <a href="ourexcitement.html" class="card">your Diary</a>
+    </div>
+  </main>
+
+  <script>
+    const messages = [
+      "Selamat Bahagia 🎉", "Happy Anniversary 💖","Luna cantik","Luna imut","Kesayanganku Luna", "Sehat selalu 💍",
+      "Love Forever 💕", "Bahagia Selalu 🌸", "Cheers 🥂", "Best Wishes 🌟", "Always Smile 😊",
+      "Sweet Memories 📸", "Romantic Journey 💫", "Stay Strong 💪", "Happiness Always 🌈",
+      "Together Forever ❤️", "Simanis Luna 🔥", "Lovely Day 🌹", "Blessings 🙏", "Joyful Moments 🎶"
+    ];
+
+    // generate 200 bubbles
+    for (let i = 0; i < 200; i++) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+      // random vertical position
+      bubble.style.top = Math.random() * 90 + "%";
+
+      // random background color
+      const colors = [
+        "rgba(255,182,193,0.7)", "rgba(135,206,250,0.7)", "rgba(255,165,0,0.7)",
+        "rgba(144,238,144,0.7)", "rgba(221,160,221,0.7)", "rgba(255,215,0,0.7)"
+      ];
+      bubble.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+      // random duration
+      const duration = 10 + Math.random() * 20;
+      bubble.style.animationDuration = duration + "s";
+
+      // random direction
+      if (Math.random() > 0.5) {
+        bubble.style.animationName = "move-left";
+      } else {
+        bubble.style.animationName = "move-right";
+      }
+
+      document.body.appendChild(bubble);
+    }
+  </script>
+
+</body>
+</html>

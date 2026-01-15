@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Memories</title>
+    <link rel="stylesheet" href="css/memories.css" />
+</head>
+
+<body>
+    <!-- Musik Latar -->
+    <section class="music-player">
+        <audio id="bgMusic" autoplay loop>
+            <source src="audio/Raissa Anggiani - Losing Us..mp3" type="audio/mp3">
+            <source src="audio/Bruno Mars - Talking To The Moon Lyrics.mp3" type="audio/mp3">
+            Browser kamu tidak mendukung audio.
+        </audio>
+    </section>
+
+
+
+    <div class="overlay">
+        <h1>picture Page</h1>
+    </div>
+
+    <!-- Floating Upload Button -->
+    <button id="uploadBtn" class="fab">+</button>
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
+
+    <div class="gallery" id="gallery"></div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <span class="close">&times;</span>
+        <img id="lightbox-img" src="" alt="Preview">
+    </div>
+
+
+
+
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        for (let i = 1; i <= 2001; i++) {
+            const img = new Image();
+            img.src = `../img/${i}.jpg`;
+            img.alt = `Photo ${i}`;
+            img.className = 'thumb';
+            img.onerror = () => img.remove(); // hapus kalau file tidak ada
+            img.addEventListener('click', () => {
+                document.getElementById('lightbox-img').src = img.src;
+                document.getElementById('lightbox').style.display = 'flex';
+            });
+            gallery.appendChild(img);
+        }
+
+
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('lightbox').style.display = 'none';
+        });
+
+        // Tombol upload mengambang
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click(); // buka dialog file
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    img.className = 'thumb';
+
+                    img.addEventListener('click', () => {
+                        document.getElementById('lightbox-img').src = img.src;
+                        document.getElementById('lightbox').style.display = 'flex';
+                    });
+
+                    gallery.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+
+</html>

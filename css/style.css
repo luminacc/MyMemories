@@ -1,0 +1,87 @@
+/* Reset dasar */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+  background: url('../img/cover1.png') no-repeat center center/cover;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hero section */
+.hero {
+  text-align: center;
+  color: #000000;
+  backdrop-filter: blur(1px);
+  padding: 10rem;
+}
+
+/* Greeting text */
+.greeting {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  animation: fadeInDown 1s ease;
+}
+
+/* Date text */
+.date {
+  font-size: 1.2rem;
+  margin-bottom: 3rem; /* jarak lebih besar agar cards turun */
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+/* Cards container */
+.cards {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 2rem; /* posisikan lebih ke bawah */
+}
+
+/* Card style */
+.card {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2rem 3rem;
+  border-radius: 15px;
+  text-decoration: none;
+  color: #000000;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: transform 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-10px) scale(1.05);
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
