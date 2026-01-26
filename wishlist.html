@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wishlist - Luminacc</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #fdf6f6;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+      min-height: 100vh;
+      padding-top: 120px;
+      /* Space for fixed header */
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 1rem;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .wishlist-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .wishlist-timeline {
+      position: relative;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+
+    .wishlist-timeline::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      background-color: #a1c4fd;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -3px;
+      border-radius: 3px;
+    }
+
+    .wishlist-item {
+      padding: 15px 40px;
+      position: relative;
+      width: 50%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+
+    .wishlist-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .wishlist-item::after {
+      content: '';
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      right: -12px;
+      background-color: white;
+      border: 4px solid #a1c4fd;
+      top: 20px;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .wishlist-item.completed::after {
+      border-color: #4CAF50;
+    }
+
+    .left {
+      left: 0;
+    }
+
+    .right {
+      left: 50%;
+    }
+
+    .left::before {
+      content: " ";
+      height: 0;
+      position: absolute;
+      top: 27px;
+      width: 0;
+      z-index: 1;
+      right: 30px;
+      border: medium solid white;
+      border-width: 10px 0 10px 10px;
+      border-color: transparent transparent transparent white;
+    }
+
+    .right::before {
+      content: " ";
+      height: 0;
+      position: absolute;
+      top: 27px;
+      width: 0;
+      z-index: 1;
+      left: 30px;
+      border: medium solid white;
+      border-width: 10px 10px 10px 0;
+      border-color: transparent white transparent transparent;
+    }
+
+    .right::after {
+      left: -12px;
+    }
+
+    .wishlist-content {
+      padding: 20px;
+      background-color: white;
+      position: relative;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .wishlist-item.completed .wishlist-content {
+      opacity: 0.7;
+    }
+
+    .wishlist-item.completed .wishlist-content::after {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #4CAF50;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .wishlist-date {
+      font-weight: bold;
+      color: #6b8bc4;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .wishlist-title {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .wishlist-desc {
+      margin-bottom: 15px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .wishlist-img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .wishlist-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .complete-btn, .delete-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .complete-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .complete-btn:hover {
+      background: #45a049;
+    }
+
+    .delete-btn {
+      background: #f44336;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background: #d32f2f;
+    }
+
+    .add-wishlist-btn {
+      display: block;
+      margin: 40px auto;
+      padding: 12px 25px;
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .add-wishlist-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(161, 196, 253, 0.4);
+    }
+
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .filter-tab {
+      padding: 10px 20px;
+      background: white;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .filter-tab:first-child {
+      border-radius: 20px 0 0 20px;
+    }
+
+    .filter-tab:last-child {
+      border-radius: 0 20px 20px 0;
+    }
+
+    .filter-tab.active {
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      color: white;
+      border-color: transparent;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .form-group textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #888;
+    }
+
+    .empty-state img {
+      width: 150px;
+      opacity: 0.5;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 992px) {
+      .wishlist-item {
+        padding: 10px 30px;
+      }
+
+      .wishlist-content {
+        padding: 15px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding-top: 100px;
+      }
+
+      header {
+        padding: 15px;
+      }
+
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      header p {
+        font-size: 0.9rem;
+      }
+
+      .back-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+
+      .wishlist-timeline::after {
+        left: 50%;
+      }
+
+      .wishlist-item {
+        width: 50%;
+        padding-left: 30px;
+        padding-right: 30px;
+      }
+
+      .left::before {
+        right: 20px;
+      }
+
+      .right::before {
+        left: 20px;
+      }
+
+      .wishlist-content {
+        padding: 12px;
+      }
+
+      .wishlist-title {
+        font-size: 1rem;
+      }
+
+      .wishlist-desc {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media screen and (max-width: 576px) {
+      body {
+        padding-top: 90px;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .wishlist-container {
+        padding: 15px;
+      }
+
+      .wishlist-item {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .wishlist-content {
+        padding: 10px;
+      }
+
+      .wishlist-date {
+        font-size: 0.8rem;
+      }
+
+      .wishlist-title {
+        font-size: 0.95rem;
+      }
+
+      .wishlist-desc {
+        font-size: 0.85rem;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 20% auto;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      .wishlist-item {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .wishlist-item::after {
+        width: 20px;
+        height: 20px;
+        right: -10px;
+        top: 15px;
+      }
+
+      .right::after {
+        left: -10px;
+      }
+
+      .left::before {
+        right: 15px;
+        border-width: 8px 0 8px 8px;
+      }
+
+      .right::before {
+        left: 15px;
+        border-width: 8px 8px 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn">← Kembali</a>
+    <h1>Wishlist Kita</h1>
+    <p>Impian dan hal-hal yang ingin kita lakukan bersama</p>
+  </header>
+
+  <div class="wishlist-container">
+    <div class="filter-tabs">
+      <div class="filter-tab active" data-filter="all">Semua</div>
+      <div class="filter-tab" data-filter="pending">Belum Terpenuhi</div>
+      <div class="filter-tab" data-filter="completed">Terpenuhi</div>
+    </div>
+
+    <div class="wishlist-timeline" id="wishlistTimeline">
+      <!-- Wishlist items will be dynamically added here -->
+    </div>
+
+    <button class="add-wishlist-btn" id="addWishlistBtn">+ Tambah Wishlist Baru</button>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <p>Belum ada wishlist. Tambahkan wishlist pertama kamu!</p>
+    </div>
+  </div>
+
+  <!-- Modal for adding new wishlist items -->
+  <div id="wishlistModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Tambah Wishlist Baru</h2>
+      <form id="wishlistForm">
+        <div class="form-group">
+          <label for="wishlistTitle">Judul</label>
+          <input type="text" id="wishlistTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="wishlistDesc">Deskripsi</label>
+          <textarea id="wishlistDesc" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="wishlistImg">URL Gambar (opsional)</label>
+          <input type="text" id="wishlistImg" placeholder="https://example.com/image.jpg">
+        </div>
+        <button type="submit" class="submit-btn">Simpan</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      query,
+      orderBy,
+      Timestamp,
+      doc,
+      updateDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDX-LrJEGQxODpEelbS8Pp-vm1CegLOceY",
+      authDomain: "luminac-6437a.firebaseapp.com",
+      projectId: "luminac-6437a",
+      storageBucket: "luminac-6437a.appspot.com",
+      messagingSenderId: "476684760512",
+      appId: "1:476684760512:web:8a669df2e639cba4194425",
+      measurementId: "G-E903BM0C2Q"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function formatDate(dateValue) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateObj = dateValue?.toDate ? dateValue.toDate() : new Date(dateValue);
+      return dateObj.toLocaleDateString('id-ID', options);
+    }
+
+    // Function to create wishlist item
+    function createWishlistItem(data, index) {
+      const isLeft = index % 2 === 0;
+      const wishlistItem = document.createElement('div');
+      wishlistItem.className = `wishlist-item ${isLeft ? 'left' : 'right'} ${data.completed ? 'completed' : ''}`;
+      wishlistItem.dataset.id = data.id;
+      wishlistItem.dataset.status = data.completed ? 'completed' : 'pending';
+      
+      const content = `
+        <div class="wishlist-content">
+          <div class="wishlist-date">Ditambahkan: ${formatDate(data.date)}</div>
+          <div class="wishlist-title">${data.title}</div>
+          ${data.image ? `<img src="${data.image}" alt="${data.title}" class="wishlist-img">` : ''}
+          <div class="wishlist-desc">${data.description}</div>
+          <div class="wishlist-actions">
+            <button class="complete-btn">${data.completed ? 'Batalkan' : 'Tandai Selesai'}</button>
+            <button class="delete-btn">Hapus</button>
+          </div>
+        </div>
+      `;
+      
+      wishlistItem.innerHTML = content;
+      
+      // Add event listeners
+      const completeBtn = wishlistItem.querySelector('.complete-btn');
+      const deleteBtn = wishlistItem.querySelector('.delete-btn');
+      
+      completeBtn.addEventListener('click', function() {
+        toggleComplete(data.id);
+      });
+      
+      deleteBtn.addEventListener('click', function() {
+        deleteWishlistItem(data.id);
+      });
+      
+      return wishlistItem;
+    }
+
+    // Function to render wishlist items
+    function renderWishlist(filter = 'all') {
+      const wishlistTimeline = document.getElementById('wishlistTimeline');
+      const emptyState = document.getElementById('emptyState');
+      
+      // Clear existing items
+      wishlistTimeline.innerHTML = '';
+      
+      // Listen to Firebase data
+      const q = query(collection(db, "wishlistItems"), orderBy("date"));
+      onSnapshot(q, (snapshot) => {
+        wishlistTimeline.innerHTML = '';
+        
+        // Filter items based on selected filter
+        let filteredItems = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          
+          if (filter === 'all') {
+            filteredItems.push(data);
+          } else if (filter === 'pending' && !data.completed) {
+            filteredItems.push(data);
+          } else if (filter === 'completed' && data.completed) {
+            filteredItems.push(data);
+          }
+        });
+        
+        // Show empty state if no items
+        if (filteredItems.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        } else {
+          emptyState.style.display = 'none';
+        }
+        
+        // Add filtered items to timeline
+        let index = 0;
+        filteredItems.forEach(item => {
+          const wishlistItem = createWishlistItem(item, index);
+          wishlistTimeline.appendChild(wishlistItem);
+          index++;
+        });
+        
+        // Add animation to items
+        setTimeout(() => {
+          document.querySelectorAll('.wishlist-item').forEach((item, i) => {
+            setTimeout(() => {
+              item.classList.add('show');
+            }, i * 100);
+          });
+        }, 100);
+      });
+    }
+
+    // Function to toggle complete status
+    function toggleComplete(id) {
+      const itemRef = doc(db, "wishlistItems", id);
+      updateDoc(itemRef, {
+        completed: !document.querySelector(`[data-id="${id}"]`).classList.contains('completed')
+      }).then(() => {
+        console.log("Status updated successfully");
+      }).catch(error => {
+        console.error("Error updating status: ", error);
+      });
+    }
+
+    // Function to delete wishlist item
+    function deleteWishlistItem(id) {
+      if (confirm('Apakah kamu yakin ingin menghapus wishlist ini?')) {
+        const itemRef = doc(db, "wishlistItems", id);
+        deleteDoc(itemRef).then(() => {
+          console.log("Document successfully deleted!");
+        }).catch(error => {
+          console.error("Error removing document: ", error);
+        });
+      }
+    }
+
+    // Function to get current filter
+    function getCurrentFilter() {
+      const activeTab = document.querySelector('.filter-tab.active');
+      return activeTab ? activeTab.dataset.filter : 'all';
+    }
+
+    // Modal functionality
+    const modal = document.getElementById('wishlistModal');
+    const btn = document.getElementById('addWishlistBtn');
+    const span = document.getElementsByClassName('close')[0];
+    const form = document.getElementById('wishlistForm');
+
+    btn.onclick = function() {
+      modal.style.display = 'block';
+    }
+
+    span.onclick = function() {
+      modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      
+      const newWishlist = {
+        date: Timestamp.now(), // Otomatis menggunakan tanggal saat ini
+        title: document.getElementById('wishlistTitle').value,
+        description: document.getElementById('wishlistDesc').value,
+        image: document.getElementById('wishlistImg').value || '',
+        completed: false
+      };
+      
+      addDoc(collection(db, "wishlistItems"), newWishlist)
+        .then(() => {
+          console.log("Wishlist successfully added to Firebase!");
+        })
+        .catch(error => {
+          console.error("Error adding wishlist: ", error);
+        });
+      
+      // Reset form and close modal
+      form.reset();
+      modal.style.display = 'none';
+    }
+
+    // Filter tabs functionality
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        // Remove active class from all tabs
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        this.classList.add('active');
+        
+        // Render wishlist with selected filter
+        renderWishlist(this.dataset.filter);
+      });
+    });
+
+    // Initialize wishlist
+    renderWishlist();
+  </script>
+</body>
+</html>

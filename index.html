@@ -41,17 +41,56 @@
       from { transform: translateX(-120vw); }
       to { transform: translateX(120vw); }
     }
-  </style>
 
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+    }
+
+    .card {
+      display: block;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-title {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      color: #ff6b8b;
+    }
+  </style>
 </head>
 <body>
   <main class="hero">
     <h1 class="greeting">Happy Day When We Meet and Be Together ❤❤</h1>
     <p class="date">January 19, 2025</p>
+    
+   
     <div class="cards">
-      <a href="memories.html" class="card">My pitcure</a>
+      <a href="memories.html" class="card">My Picture</a>
       <a href="mypicture.html" class="card">Memories</a>
-      <a href="ourexcitement.html" class="card">your Diary</a>
+      <a href="ourexcitement.html" class="card">Your Diary</a>
+    </div>
+    
+
+    <div class="cards">
+      <a href="timeline.html" class="card">Love Timeline</a>
+      <a href="wishlist.html" class="card">Wishlist</a>
+      <a href="quiz.html" class="card">Quiz Games</a>
+      <a href="affirmation.html" class="card">Daily Affirmation</a>
     </div>
   </main>
 
@@ -93,6 +132,5 @@
       document.body.appendChild(bubble);
     }
   </script>
-
 </body>
 </html>
