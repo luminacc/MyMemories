@@ -41,26 +41,32 @@
             const uploadBtn = document.getElementById('uploadBtn');
             const fileInput = document.getElementById('fileInput');
 
-            // --- PERUBAHAN UTAMA: Fungsi untuk memuat gambar dari daftar yang sudah diketahui ---
+            // Fungsi untuk memuat gambar dari daftar yang sudah diketahui
             async function loadGalleryImages() {
                 // Buat daftar gambar berdasarkan struktur folder yang benar
                 const imagePaths = [];
 
-                // Gambar dari img/set1/
-                for (let i = 1; i <= 999; i++) {
-                    imagePaths.push(`img/set1/${i}.jpg`);
-                }
-                for (let i = 1000; i <= 2000; i++) {
-                    imagePaths.push(`img/set1/${i}.jpg`);
+                // Gambar dari img/set1/ (001.jpg hingga 2000.jpg)
+                for (let i = 1; i <= 2000; i++) {
+                    // Format angka dengan 3 digit untuk 1-999
+                    const formattedNum = i < 10 ? `00${i}` : 
+                                       i < 100 ? `0${i}` : 
+                                       i < 1000 ? `${i}` : 
+                                       `${i}`;
+                    imagePaths.push(`img/set1/${formattedNum}.jpg`);
                 }
 
-                // Gambar dari img/set2/
-                for (let i = 1003; i <= 1096; i++) {
+                // Gambar dari img/set2/ (1003.jpg hingga 1098.jpg)
+                for (let i = 1003; i <= 1098; i++) {
                     imagePaths.push(`img/set2/${i}.jpg`);
                 }
-                // Tambahkan gambar-gambar khusus dari set2
-                imagePaths.push('img/set2/2001.jpg');
-                imagePaths.push('img/set2/cover1.png');
+                // Tambahkan file khusus dari set2
+                imagePaths.push('img/set2/1098.png');
+
+                // Gambar dari img/set3/ (1097.jpg hingga 1540.jpg)
+                for (let i = 1097; i <= 1540; i++) {
+                    imagePaths.push(`img/set3/${i}.jpg`);
+                }
 
                 // Periksa setiap path dan tambahkan ke galeri jika ada
                 for (const path of imagePaths) {
@@ -86,7 +92,7 @@
             // Panggil fungsi untuk memuat gambar saat halaman dimuat
             loadGalleryImages();
 
-            // --- Event Listener yang sudah ada (tidak berubah) ---
+            // Event Listener yang sudah ada (tidak berubah)
             closeBtn.addEventListener('click', () => {
                 lightbox.style.display = 'none';
             });
