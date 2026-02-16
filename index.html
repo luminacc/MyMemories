@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Luminacc</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --primary-color: #424242;
@@ -82,13 +85,23 @@
     }
 
     @keyframes move-left {
-      from { transform: translateX(120vw); }
-      to { transform: translateX(-120vw); }
+      from {
+        transform: translateX(120vw);
+      }
+
+      to {
+        transform: translateX(-120vw);
+      }
     }
 
     @keyframes move-right {
-      from { transform: translateX(-120vw); }
-      to { transform: translateX(120vw); }
+      from {
+        transform: translateX(-120vw);
+      }
+
+      to {
+        transform: translateX(120vw);
+      }
     }
 
     .cards {
@@ -149,11 +162,25 @@
     }
 
     @keyframes heartbeat {
-      0% { transform: scale(1); }
-      14% { transform: scale(1.1); }
-      28% { transform: scale(1); }
-      42% { transform: scale(1.1); }
-      70% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      14% {
+        transform: scale(1.1);
+      }
+
+      28% {
+        transform: scale(1);
+      }
+
+      42% {
+        transform: scale(1.1);
+      }
+
+      70% {
+        transform: scale(1);
+      }
     }
 
     /* Responsive scaling */
@@ -167,6 +194,7 @@
       :root {
         --scale-factor: 0.9;
       }
+
       .cards {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 12px;
@@ -177,18 +205,22 @@
       :root {
         --scale-factor: 0.8;
       }
+
       .hero {
         padding: 4vh 4vw;
       }
+
       .cards {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 10px;
         max-width: 95vw;
       }
+
       .card {
         padding: 12px;
         min-height: 85px;
       }
+
       .bubble {
         font-size: 0.65rem;
         padding: 3px 6px;
@@ -199,18 +231,22 @@
       :root {
         --scale-factor: 0.7;
       }
+
       .hero {
         padding: 3vh 3vw;
       }
+
       .cards {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
         max-width: 98vw;
       }
+
       .card {
         padding: 10px;
         min-height: 75px;
       }
+
       .bubble {
         font-size: 0.6rem;
         padding: 2px 5px;
@@ -221,14 +257,17 @@
       :root {
         --scale-factor: 0.6;
       }
+
       .cards {
         grid-template-columns: repeat(2, 1fr);
         gap: 6px;
       }
+
       .card {
         padding: 8px;
         min-height: 65px;
       }
+
       .greeting {
         font-size: clamp(1.2rem, 7vw, 2.5rem);
       }
@@ -239,28 +278,44 @@
       .hero {
         padding: 2vh 2vw;
       }
+
       .greeting {
         margin-bottom: 0.5vh;
       }
+
       .date {
         margin-bottom: 1.5vh;
       }
+
       .cards {
         margin: 2vh auto;
       }
+
       .card {
         min-height: 60px;
         padding: 8px;
       }
     }
   </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-E903BM0C2Q');
+  </script>
+
 </head>
+
 <body>
   <main class="hero">
     <h1 class="greeting">Happy Day When We Meet and Be Together ❤❤</h1>
     <div class="heart-divider">❤️ ❤️ ❤️</div>
     <p class="date">January 19, 2025</p>
-    
+
     <div class="cards">
       <a href="memories.html" class="card">
         <i class="fas fa-camera-retro"></i>
@@ -298,7 +353,7 @@
 
   <script>
     const messages = [
-      "Selamat Bahagia 🎉", "Happy Anniversary 💖","Luna cantik","Luna imut","Kesayanganku Luna", "Sehat selalu 💍",
+      "Selamat Bahagia 🎉", "Happy Anniversary 💖", "Luna cantik", "Luna imut", "Kesayanganku Luna", "Sehat selalu 💍",
       "Love Forever 💕", "Bahagia Selalu 🌸", "Cheers 🥂", "Best Wishes 🌟", "Always Smile 😊",
       "Sweet Memories 📸", "Romantic Journey 💫", "Stay Strong 💪", "Happiness Always 🌈",
       "Together Forever ❤️", "Simanis Luna 🔥", "Lovely Day 🌹", "Blessings 🙏", "Joyful Moments 🎶"
@@ -315,7 +370,7 @@
       const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
       const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
       const minDimension = Math.min(vw, vh);
-      
+
       let scaleFactor = 1;
       if (minDimension < 400) {
         scaleFactor = 0.6;
@@ -328,23 +383,23 @@
       } else if (minDimension < 1200) {
         scaleFactor = 0.95;
       }
-      
+
       document.documentElement.style.setProperty('--scale-factor', scaleFactor);
     }
 
     // Adjust bubble count based on screen size and device performance
     function createBubbles() {
       document.querySelectorAll(".bubble").forEach(bubble => bubble.remove());
-      
+
       let bubbleCount;
       if (isLowPerformanceDevice()) {
         bubbleCount = window.innerWidth < 768 ? 10 : 20;
       } else {
         bubbleCount = window.innerWidth < 768 ? 20 : (window.innerWidth < 1024 ? 40 : 60);
       }
-      
+
       const fragment = document.createDocumentFragment();
-      
+
       for (let i = 0; i < bubbleCount; i++) {
         const bubble = document.createElement("div");
         bubble.className = "bubble";
@@ -369,7 +424,7 @@
 
         fragment.appendChild(bubble);
       }
-      
+
       document.body.appendChild(fragment);
     }
 
@@ -410,4 +465,5 @@
     window.addEventListener('scroll', updateBubblesOnScroll);
   </script>
 </body>
+
 </html>
