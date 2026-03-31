@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Love Timeline - Luminacc</title>
+  <!-- BAGIAN STYLE TIDAK DIUBAH SAMA SEKALI -->
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +19,6 @@
       color: #333;
       min-height: 100vh;
       padding-top: 120px;
-      /* Space for fixed header */
     }
 
     header {
@@ -445,16 +445,19 @@
           <label for="eventDesc">Deskripsi</label>
           <textarea id="eventDesc" required></textarea>
         </div>
+        <!-- PERUBAHAN: KEMBALI MENGGUNAKAN INPUT TEKS UNTUK LINK -->
         <div class="form-group">
-          <label for="eventImg">URL Gambar (opsional)</label>
-          <input type="text" id="eventImg" placeholder="https://example.com/image.jpg">
+          <label for="eventImg">Link Gambar (opsional)</label>
+          <input type="url" id="eventImg" placeholder="Tempel link gambar dari Google Drive, dll.">
         </div>
+        <!-- AKHIR PERUBAHAN -->
         <button type="submit" class="submit-btn">Simpan</button>
       </form>
     </div>
   </div>
 
   <script type="module">
+    // Import modul Firebase yang diperlukan (TIDAK PERLU STORAGE)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import {
       getFirestore,
@@ -491,13 +494,13 @@
       timelineItem.className = `timeline-item ${isLeft ? 'left' : 'right'}`;
 
       const content = `
-      <div class="timeline-content">
-        <div class="timeline-date">${formatDate(data.date)}</div>
-        <div class="timeline-title">${data.title}</div>
-        ${data.image ? `<img src="${data.image}" alt="${data.title}" class="timeline-img">` : ''}
-        <div class="timeline-desc">${data.description}</div>
-      </div>
-    `;
+        <div class="timeline-content">
+          <div class="timeline-date">${formatDate(data.date)}</div>
+          <div class="timeline-title">${data.title}</div>
+          ${data.image ? `<img src="${data.image}" alt="${data.title}" class="timeline-img">` : ''}
+          <div class="timeline-desc">${data.description}</div>
+        </div>
+      `;
       timelineItem.innerHTML = content;
       return timelineItem;
     }
@@ -541,26 +544,48 @@
     window.onclick = (event) => {
       if (event.target == modal) modal.style.display = 'none';
     };
+    
+    // FUNGSI UNTUK MENGUBAH LINK GOOGLE DRIVE
+    function convertGoogleDriveLink(link) {
+      if (!link) return '';
+      const regex = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
+      const match = link.match(regex);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+      return link; // Kembalikan link asli jika bukan link Google Drive
+    }
 
     form.onsubmit = async function (e) {
       e.preventDefault();
-
-      const newEvent = {
-        date: Timestamp.fromDate(new Date(document.getElementById('eventDate').value)),
-        title: document.getElementById('eventTitle').value,
-        description: document.getElementById('eventDesc').value,
-        image: document.getElementById('eventImg').value || ''
-      };
+      
+      const submitBtn = form.querySelector('.submit-btn');
+      const originalText = submitBtn.innerText;
+      submitBtn.innerText = 'Menyimpan...';
+      submitBtn.disabled = true;
 
       try {
+        const imageUrl = convertGoogleDriveLink(document.getElementById('eventImg').value);
+
+        const newEvent = {
+          date: Timestamp.fromDate(new Date(document.getElementById('eventDate').value)),
+          title: document.getElementById('eventTitle').value,
+          description: document.getElementById('eventDesc').value,
+          image: imageUrl // Simpan link yang sudah dikonversi
+        };
+
         await addDoc(collection(db, "timelineEvents"), newEvent);
-        console.log("Event berhasil disimpan ke Firebase!");
+        
+        form.reset();
+        modal.style.display = 'none';
+
       } catch (error) {
         console.error("Gagal menyimpan event:", error);
+        alert("Terjadi kesalahan saat menyimpan. Coba lagi.");
+      } finally {
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
       }
-
-      form.reset();
-      modal.style.display = 'none';
     };
 
     // Jalankan saat halaman dimuat
