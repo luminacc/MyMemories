@@ -456,8 +456,8 @@
     </div>
   </div>
 
-  <script type="module">
-    // Import modul Firebase yang diperlukan (TIDAK PERLU STORAGE)
+    <script type="module">
+    // Import modul Firebase yang diperlukan
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import {
       getFirestore,
@@ -488,16 +488,43 @@
       return dateObj.toLocaleDateString('id-ID', options);
     }
 
+    // FUNGSI CONVERT LINK YANG DIPERBAIKI (LEbih Fleksibel)
+    function convertGoogleDriveLink(link) {
+      if (!link) return '';
+      
+      // Hapus spasi di awal/akhir
+      link = link.trim();
+
+      // Pola 1: Format standar /file/d/ID/...
+      let match = link.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      // Pola 2: Format lama /open?id=ID
+      if (!match) match = link.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+
+      if (match && match[1]) {
+        // Kembalikan link direct
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+      
+      // Jika bukan link drive, kembalikan apa adanya (misal link imgur, dll)
+      return link;
+    }
+
     function createTimelineItem(data, index) {
       const isLeft = index % 2 === 0;
       const timelineItem = document.createElement('div');
       timelineItem.className = `timeline-item ${isLeft ? 'left' : 'right'}`;
 
+      // TAMBAHAN: onerror untuk menyembunyikan gambar jika link error/gagal loading
+      // Ini penting agar jika link Drive privat, tidak muncul icon gambar pecah yang jelek
+      const imgHtml = data.image 
+        ? `<img src="${data.image}" alt="${data.title}" class="timeline-img" onerror="this.style.display='none'; this.parentNode.style.padding='20px';">` 
+        : '';
+
       const content = `
         <div class="timeline-content">
           <div class="timeline-date">${formatDate(data.date)}</div>
           <div class="timeline-title">${data.title}</div>
-          ${data.image ? `<img src="${data.image}" alt="${data.title}" class="timeline-img">` : ''}
+          ${imgHtml}
           <div class="timeline-desc">${data.description}</div>
         </div>
       `;
@@ -545,17 +572,6 @@
       if (event.target == modal) modal.style.display = 'none';
     };
     
-    // FUNGSI UNTUK MENGUBAH LINK GOOGLE DRIVE
-    function convertGoogleDriveLink(link) {
-      if (!link) return '';
-      const regex = /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
-      const match = link.match(regex);
-      if (match && match[1]) {
-        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-      }
-      return link; // Kembalikan link asli jika bukan link Google Drive
-    }
-
     form.onsubmit = async function (e) {
       e.preventDefault();
       
@@ -565,13 +581,19 @@
       submitBtn.disabled = true;
 
       try {
-        const imageUrl = convertGoogleDriveLink(document.getElementById('eventImg').value);
+        const rawLink = document.getElementById('eventImg').value;
+        const imageUrl = convertGoogleDriveLink(rawLink);
+
+        // Validasi sederhana: jika user mengisi link tapi hasil convert kosong (aneh)
+        if (rawLink && !imageUrl) {
+          throw new Error("Format link tidak dikenali.");
+        }
 
         const newEvent = {
           date: Timestamp.fromDate(new Date(document.getElementById('eventDate').value)),
           title: document.getElementById('eventTitle').value,
           description: document.getElementById('eventDesc').value,
-          image: imageUrl // Simpan link yang sudah dikonversi
+          image: imageUrl 
         };
 
         await addDoc(collection(db, "timelineEvents"), newEvent);
@@ -581,7 +603,7 @@
 
       } catch (error) {
         console.error("Gagal menyimpan event:", error);
-        alert("Terjadi kesalahan saat menyimpan. Coba lagi.");
+        alert("Gagal menyimpan: " + error.message + "\nPastikan format link benar.");
       } finally {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
