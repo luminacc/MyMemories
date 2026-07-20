@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mood Tracker - Luminacc</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #a855f7 100%);
+      min-height: 100vh;
+      padding-top: 110px;
+      color: #333;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-family: 'Dancing Script', cursive;
+      margin: 0;
+      font-size: 2rem;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    header p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.25);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.45); }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .today-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .today-card h2 {
+      color: #5b21b6;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .today-card p {
+      color: #7c3aed;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .mood-options {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .mood-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 3px solid #e9d5ff;
+      background: white;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .mood-btn:hover {
+      transform: scale(1.15);
+      border-color: #7c3aed;
+      box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+    }
+
+    .mood-btn.selected {
+      transform: scale(1.2);
+      border-color: #7c3aed;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+      background: #f3e8ff;
+    }
+
+    .mood-btn .mood-label {
+      position: absolute;
+      bottom: -22px;
+      font-size: 0.65rem;
+      color: #7c3aed;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .note-group {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .note-group label {
+      display: block;
+      font-weight: 600;
+      color: #5b21b6;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .note-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e9d5ff;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-family: 'Poppins', sans-serif;
+      resize: vertical;
+      height: 80px;
+      transition: border-color 0.3s;
+      background: #faf5ff;
+    }
+
+    .note-group textarea:focus {
+      outline: none;
+      border-color: #7c3aed;
+      background: white;
+    }
+
+    .save-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+    }
+
+    .save-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .saved-msg {
+      display: none;
+      margin-top: 15px;
+      padding: 10px;
+      background: #d1fae5;
+      color: #065f46;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .saved-msg.show { display: block; animation: fadeIn 0.3s ease; }
+
+    /* Calendar */
+    .calendar-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      margin-bottom: 25px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .calendar-header h3 {
+      color: #5b21b6;
+      font-size: 1.2rem;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    .calendar-nav button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #e9d5ff;
+      background: white;
+      color: #7c3aed;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calendar-nav button:hover {
+      background: #7c3aed;
+      color: white;
+      border-color: #7c3aed;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .cal-day-name {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #7c3aed;
+      padding: 6px 0;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      position: relative;
+      background: #f5f3ff;
+      transition: all 0.2s;
+    }
+
+    .cal-day.empty { background: transparent; }
+    .cal-day.today { border: 2px solid #7c3aed; font-weight: 700; }
+
+    .cal-day.has-mood {
+      cursor: pointer;
+    }
+
+    .cal-day.has-mood:hover {
+      transform: scale(1.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .cal-day .mood-dot {
+      font-size: 1.1rem;
+    }
+
+    /* Stats */
+    .stats-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .stats-card h3 {
+      color: #5b21b6;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 18px 10px;
+      background: #f5f3ff;
+      border-radius: 14px;
+      transition: transform 0.3s;
+    }
+
+    .stat-item:hover { transform: translateY(-3px); }
+
+    .stat-emoji { font-size: 2.2rem; margin-bottom: 8px; }
+    .stat-count { font-size: 1.5rem; font-weight: 700; color: #5b21b6; }
+    .stat-label { font-size: 0.75rem; color: #7c3aed; margin-top: 4px; }
+    .stat-bar {
+      width: 100%;
+      height: 6px;
+      background: #e9d5ff;
+      border-radius: 3px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      transition: width 0.5s ease;
+    }
+
+    .total-moods {
+      text-align: center;
+      margin-top: 20px;
+      color: #7c3aed;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* Mood tooltip */
+    .mood-tooltip {
+      display: none;
+      position: fixed;
+      background: white;
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      z-index: 3000;
+      max-width: 220px;
+      font-size: 0.85rem;
+    }
+
+    .mood-tooltip.show { display: block; }
+    .mood-tooltip .tt-mood { font-size: 1.5rem; margin-bottom: 4px; }
+    .mood-tooltip .tt-date { color: #7c3aed; font-weight: 600; font-size: 0.75rem; }
+    .mood-tooltip .tt-note { color: #555; margin-top: 4px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body { padding-top: 95px; }
+      header { padding: 14px; }
+      header h1 { font-size: 1.5rem; }
+      header p { font-size: 0.75rem; }
+      .back-btn { padding: 6px 12px; font-size: 13px; }
+      .container { padding: 15px; }
+      .today-card { padding: 22px 18px; }
+      .mood-btn { width: 58px; height: 58px; font-size: 1.7rem; }
+      .calendar-card { padding: 18px; }
+      .stats-grid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
+    }
+
+    @media (max-width: 576px) {
+      header h1 { font-size: 1.3rem; }
+      .mood-btn { width: 52px; height: 52px; font-size: 1.5rem; }
+      .cal-day { font-size: 0.75rem; }
+      .stat-item { padding: 14px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Kembali</a>
+    <h1>Mood Tracker</h1>
+    <p>Bagaimana perasaanmu hari ini?</p>
+  </header>
+
+  <div class="container">
+    <!-- Today's Mood -->
+    <div class="today-card">
+      <h2><i class="fas fa-sun" style="color:#f59e0b;"></i> How are you today?</h2>
+      <p>Pilih emoji yang paling menggambarkan perasaanmu</p>
+
+      <div class="mood-options" id="moodOptions">
+        <button class="mood-btn" data-mood="😊" title="Senang">
+          😊<span class="mood-label">Senang</span>
+        </button>
+        <button class="mood-btn" data-mood="😍" title="Sayang">
+          😍<span class="mood-label">Sayang</span>
+        </button>
+        <button class="mood-btn" data-mood="😢" title="Sedih">
+          😢<span class="mood-label">Sedih</span>
+        </button>
+        <button class="mood-btn" data-mood="😤" title="Kesal">
+          😤<span class="mood-label">Kesal</span>
+        </button>
+        <button class="mood-btn" data-mood="🥰" title="Bahagia">
+          🥰<span class="mood-label">Bahagia</span>
+        </button>
+      </div>
+
+      <div class="note-group">
+        <label for="moodNote"><i class="fas fa-pen"></i> Catatan (opsional)</label>
+        <textarea id="moodNote" placeholder="Ceritakan sedikit tentang harimu..."></textarea>
+      </div>
+
+      <button class="save-btn" id="saveMood" disabled>
+        <i class="fas fa-save"></i> Simpan Mood Hari Ini
+      </button>
+
+      <div class="saved-msg" id="savedMsg">
+        <i class="fas fa-check-circle"></i> Mood hari ini berhasil disimpan! 🎉
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <h3><i class="fas fa-calendar-alt"></i> Kalender Mood</h3>
+        <div class="calendar-nav">
+          <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+          <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-card">
+      <h3><i class="fas fa-chart-pie"></i> Statistik Mood</h3>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="total-moods" id="totalMoods"></div>
+    </div>
+  </div>
+
+  <div class="mood-tooltip" id="moodTooltip">
+    <div class="tt-mood"></div>
+    <div class="tt-date"></div>
+    <div class="tt-note"></div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    import { db } from './js/firebase-config.js';
+    import {
+      collection, addDoc, query, where, onSnapshot, Timestamp, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const user = await requireAuth();
+    if (!user) throw new Error("Not authenticated");
+
+    const moods = ['😊', '😍', '😢', '😤', '🥰'];
+    const moodNames = { '😊': 'Senang', '😍': 'Sayang', '😢': 'Sedih', '😤': 'Kesal', '🥰': 'Bahagia' };
+
+    let selectedMood = null;
+    let allEntries = [];
+    let calYear, calMonth;
+
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+
+    const today = now.toISOString().split('T')[0];
+
+    const moodBtns = document.querySelectorAll('.mood-btn');
+    const saveBtn = document.getElementById('saveMood');
+    const moodNote = document.getElementById('moodNote');
+    const savedMsg = document.getElementById('savedMsg');
+
+    moodBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        moodBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedMood = btn.dataset.mood;
+        saveBtn.disabled = false;
+      });
+    });
+
+    saveBtn.addEventListener('click', async () => {
+      if (!selectedMood) return;
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      try {
+        await addDoc(collection(db, "moodEntries"), {
+          mood: selectedMood,
+          date: today,
+          note: moodNote.value.trim(),
+          uid: user.uid,
+          createdAt: Timestamp.now()
+        });
+        savedMsg.classList.add('show');
+        moodNote.value = '';
+        moodBtns.forEach(b => b.classList.remove('selected'));
+        selectedMood = null;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Mood Hari Ini';
+        setTimeout(() => savedMsg.classList.remove('show'), 3000);
+      } catch (err) {
+        console.error("Error saving mood:", err);
+        alert("Gagal menyimpan mood: " + err.message);
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Mood Hari Ini';
+      }
+    });
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+      dayNames.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-day-name';
+        el.textContent = d;
+        grid.appendChild(el);
+      });
+
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'cal-day empty';
+        grid.appendChild(empty);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dayEl = document.createElement('div');
+        dayEl.className = 'cal-day';
+
+        if (dateStr === today) dayEl.classList.add('today');
+
+        const entry = allEntries.find(e => e.date === dateStr);
+        if (entry) {
+          dayEl.classList.add('has-mood');
+          const dot = document.createElement('span');
+          dot.className = 'mood-dot';
+          dot.textContent = entry.mood;
+          dayEl.appendChild(dot);
+
+          dayEl.addEventListener('mouseenter', (e) => showTooltip(e, entry));
+          dayEl.addEventListener('mouseleave', hideTooltip);
+        } else {
+          const num = document.createElement('span');
+          num.textContent = d;
+          num.style.color = '#aaa';
+          dayEl.appendChild(num);
+        }
+
+        grid.appendChild(dayEl);
+      }
+    }
+
+    const tooltip = document.getElementById('moodTooltip');
+
+    function showTooltip(e, entry) {
+      tooltip.querySelector('.tt-mood').textContent = entry.mood;
+      tooltip.querySelector('.tt-date').textContent = entry.date;
+      tooltip.querySelector('.tt-note').textContent = entry.note || '(tanpa catatan)';
+      tooltip.classList.add('show');
+
+      const rect = e.target.getBoundingClientRect();
+      let left = rect.left + rect.width / 2 - 110;
+      let top = rect.top - 90;
+
+      if (top < 0) top = rect.bottom + 10;
+      if (left < 10) left = 10;
+      if (left + 220 > window.innerWidth) left = window.innerWidth - 230;
+
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('show');
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    });
+
+    function renderStats() {
+      const grid = document.getElementById('statsGrid');
+      const totalEl = document.getElementById('totalMoods');
+      grid.innerHTML = '';
+
+      const counts = {};
+      moods.forEach(m => counts[m] = 0);
+      allEntries.forEach(e => {
+        if (counts[e.mood] !== undefined) counts[e.mood]++;
+      });
+
+      const total = allEntries.length;
+      const maxCount = Math.max(...Object.values(counts), 1);
+
+      moods.forEach(m => {
+        const count = counts[m];
+        const pct = Math.round((count / maxCount) * 100);
+        const item = document.createElement('div');
+        item.className = 'stat-item';
+        item.innerHTML = `
+          <div class="stat-emoji">${m}</div>
+          <div class="stat-count">${count}</div>
+          <div class="stat-label">${moodNames[m]}</div>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+        `;
+        grid.appendChild(item);
+      });
+
+      totalEl.textContent = `Total ${total} entri mood tercatat`;
+    }
+
+    function listenMoods() {
+      const q = query(
+        collection(db, "moodEntries"),
+        where("uid", "==", user.uid),
+        orderBy("createdAt", "desc")
+      );
+
+      onSnapshot(q, (snapshot) => {
+        allEntries = [];
+        snapshot.forEach(doc => {
+          allEntries.push(doc.data());
+        });
+        renderCalendar();
+        renderStats();
+
+        const todayEntry = allEntries.find(e => e.date === today);
+        if (todayEntry) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '<i class="fas fa-check"></i> Sudah Terisi Hari Ini';
+          savedMsg.classList.add('show');
+          savedMsg.innerHTML = `<i class="fas fa-check-circle"></i> Mood hari ini: ${todayEntry.mood} sudah tercatat!`;
+        }
+      });
+    }
+
+    listenMoods();
+  </script>
+</body>
+</html>

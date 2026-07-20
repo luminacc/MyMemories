@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bucket List Kita - Luminacc</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: linear-gradient(135deg, #0a2f2f 0%, #0d4f4f 30%, #0891b2 60%, #064e5c 100%);
+      font-family: 'Poppins', sans-serif;
+      color: #e0f7fa;
+      min-height: 100vh;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(10,47,47,0.95), rgba(13,79,79,0.95));
+      backdrop-filter: blur(10px);
+      color: #5eead4;
+      z-index: 1000;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+
+    header h1 {
+      margin: 0;
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      text-shadow: 0 2px 10px rgba(94,234,212,0.3);
+    }
+
+    header p { margin: 6px 0 0; font-size: 0.95rem; color: #99f6e4; }
+
+    .back-btn {
+      position: absolute;
+      left: 20px; top: 50%;
+      transform: translateY(-50%);
+      background: rgba(94,234,212,0.15);
+      border: 1px solid rgba(94,234,212,0.3);
+      color: #5eead4;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover { background: rgba(94,234,212,0.25); }
+
+    .main-content {
+      position: relative;
+      z-index: 2;
+      padding: 120px 20px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .progress-section {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 25px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      border: 1px solid rgba(94,234,212,0.2);
+      backdrop-filter: blur(5px);
+    }
+
+    .progress-section h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.8rem;
+      color: #5eead4;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar-wrapper {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      height: 28px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #06b6d4, #5eead4, #2dd4bf);
+      border-radius: 12px;
+      transition: width 0.8s ease;
+      position: relative;
+      min-width: 0;
+    }
+
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .progress-text {
+      font-size: 0.95rem;
+      color: #99f6e4;
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 25px;
+    }
+
+    .filter-tab {
+      padding: 8px 18px;
+      background: rgba(94,234,212,0.1);
+      border: 1px solid rgba(94,234,212,0.2);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #99f6e4;
+      font-size: 0.85rem;
+    }
+
+    .filter-tab:hover { background: rgba(94,234,212,0.2); }
+
+    .filter-tab.active {
+      background: linear-gradient(135deg, #06b6d4, #5eead4);
+      color: #0a2f2f;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .bucketlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .bucket-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(94,234,212,0.15);
+      border-radius: 14px;
+      padding: 18px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bucket-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .bucket-item.completed {
+      border-color: rgba(45,212,191,0.3);
+      background: rgba(45,212,191,0.08);
+    }
+
+    .bucket-item.completed .bucket-title {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .bucket-item.completed::after {
+      content: '✓';
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #2dd4bf;
+      color: #0a2f2f;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .bucket-category {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .cat-travel { background: #7c3aed; color: white; }
+    .cat-food { background: #f97316; color: white; }
+    .cat-activity { background: #3b82f6; color: white; }
+    .cat-adventure { background: #10b981; color: white; }
+    .cat-romantic { background: #ec4899; color: white; }
+
+    .bucket-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e0f7fa;
+      margin-bottom: 6px;
+    }
+
+    .bucket-desc {
+      font-size: 0.85rem;
+      color: #99f6e4;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .bucket-date {
+      font-size: 0.75rem;
+      color: rgba(153,246,228,0.6);
+    }
+
+    .bucket-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .bucket-actions button {
+      padding: 6px 14px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+
+    .btn-complete {
+      background: #2dd4bf;
+      color: #0a2f2f;
+    }
+
+    .btn-complete:hover { background: #14b8a6; }
+
+    .btn-delete {
+      background: rgba(239,68,68,0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+
+    .btn-delete:hover { background: rgba(239,68,68,0.3); }
+
+    .add-btn {
+      display: block;
+      margin: 30px auto;
+      padding: 14px 30px;
+      background: linear-gradient(135deg, #06b6d4, #5eead4);
+      color: #0a2f2f;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(6,182,212,0.4);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #99f6e4;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      opacity: 0.4;
+      display: block;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(10,47,47,0.85);
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #0d4f4f, #064e5c);
+      margin: 15% auto;
+      padding: 25px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.4);
+      border: 1px solid rgba(94,234,212,0.2);
+    }
+
+    .modal-content h2 {
+      font-family: 'Dancing Script', cursive;
+      color: #5eead4;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .close {
+      color: #99f6e4;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover { color: #ffffff; }
+
+    .form-group { margin-bottom: 15px; }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #5eead4;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(94,234,212,0.3);
+      border-radius: 8px;
+      box-sizing: border-box;
+      background: rgba(0,0,0,0.3);
+      color: #e0f7fa;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .form-group textarea { height: 80px; resize: vertical; }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: rgba(153,246,228,0.4); }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #06b6d4, #5eead4);
+      color: #0a2f2f;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      transition: transform 0.3s;
+    }
+
+    .submit-btn:hover { transform: translateY(-2px); }
+
+    .confetti-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    @media screen and (max-width: 768px) {
+      header { padding: 15px; }
+      header h1 { font-size: 1.6rem; }
+      header p { font-size: 0.85rem; }
+      .back-btn { padding: 6px 12px; font-size: 13px; }
+      .main-content { padding: 110px 15px 30px; }
+      .bucketlist-grid { grid-template-columns: 1fr; }
+      .progress-section h2 { font-size: 1.5rem; }
+    }
+
+    @media screen and (max-width: 576px) {
+      header h1 { font-size: 1.4rem; }
+      .main-content { padding: 100px 12px 25px; }
+      .filter-tab { padding: 6px 14px; font-size: 0.8rem; }
+      .modal-content { width: 95%; margin: 20% auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Kembali</a>
+    <h1>Bucket List Kita</h1>
+    <p>Hal-hal yang ingin kita lakukan bersama</p>
+  </header>
+
+  <div class="main-content">
+    <div class="progress-section">
+      <h2>Progress Kita</h2>
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <p class="progress-text" id="progressText">0 dari 0 selesai</p>
+    </div>
+
+    <div class="filter-tabs">
+      <div class="filter-tab active" data-filter="all">Semua</div>
+      <div class="filter-tab" data-filter="Travel"><i class="fas fa-plane"></i> Travel</div>
+      <div class="filter-tab" data-filter="Food"><i class="fas fa-utensils"></i> Food</div>
+      <div class="filter-tab" data-filter="Activity"><i class="fas fa-running"></i> Activity</div>
+      <div class="filter-tab" data-filter="Adventure"><i class="fas fa-mountain"></i> Adventure</div>
+      <div class="filter-tab" data-filter="Romantic"><i class="fas fa-heart"></i> Romantic</div>
+    </div>
+
+    <div class="bucketlist-grid" id="bucketGrid"></div>
+
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <i class="fas fa-list-check"></i>
+      <p>Belum ada bucket list. Tambahkan impian pertama kita!</p>
+    </div>
+
+    <button class="add-btn" id="addBtn">+ Tambah Bucket List</button>
+  </div>
+
+  <div id="bucketModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Tambah Bucket List Baru</h2>
+      <form id="bucketForm">
+        <div class="form-group">
+          <label for="bucketTitle">Judul</label>
+          <input type="text" id="bucketTitle" placeholder="Contoh: ke Paris" required>
+        </div>
+        <div class="form-group">
+          <label for="bucketDesc">Deskripsi</label>
+          <textarea id="bucketDesc" placeholder="Ceritakan tentang impian ini..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="bucketCategory">Kategori</label>
+          <select id="bucketCategory" required>
+            <option value="">Pilih kategori</option>
+            <option value="Travel">Travel</option>
+            <option value="Food">Food</option>
+            <option value="Activity">Activity</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Romantic">Romantic</option>
+          </select>
+        </div>
+        <button type="submit" class="submit-btn">Simpan</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    requireAuth();
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, onSnapshot,
+      query, orderBy, Timestamp, doc, updateDoc, deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDX-LrJEGQxODpEelbS8Pp-vm1CegLOceY",
+      authDomain: "luminac-6437a.firebaseapp.com",
+      projectId: "luminac-6437a",
+      storageBucket: "luminac-6437a.appspot.com",
+      messagingSenderId: "476684760512",
+      appId: "1:476684760512:web:8a669df2e639cba4194425",
+      measurementId: "G-E903BM0C2Q"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function formatDate(dateValue) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateObj = dateValue?.toDate ? dateValue.toDate() : new Date(dateValue);
+      return dateObj.toLocaleDateString('id-ID', options);
+    }
+
+    function getCatClass(cat) {
+      const map = { Travel: 'cat-travel', Food: 'cat-food', Activity: 'cat-activity', Adventure: 'cat-adventure', Romantic: 'cat-romantic' };
+      return map[cat] || 'cat-activity';
+    }
+
+    function createBucketItem(data) {
+      const item = document.createElement('div');
+      item.className = 'bucket-item' + (data.completed ? ' completed' : '');
+      item.dataset.id = data.id;
+      item.dataset.category = data.category;
+
+      item.innerHTML = `
+        <span class="bucket-category ${getCatClass(data.category)}">${data.category}</span>
+        <div class="bucket-title">${data.title}</div>
+        <div class="bucket-desc">${data.description || ''}</div>
+        <div class="bucket-date">Ditambahkan: ${formatDate(data.addedAt)}</div>
+        <div class="bucket-actions">
+          <button class="btn-complete">${data.completed ? 'Batalkan' : 'Selesai!'} <i class="fas fa-${data.completed ? 'undo' : 'check'}"></i></button>
+          <button class="btn-delete"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+
+      item.querySelector('.btn-complete').onclick = () => toggleComplete(data.id, !data.completed);
+      item.querySelector('.btn-delete').onclick = () => deleteItem(data.id);
+
+      return item;
+    }
+
+    function updateProgress(total, completed) {
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${completed} dari ${total} selesai (${pct}%)`;
+    }
+
+    let currentFilter = 'all';
+    let allItems = [];
+
+    function renderItems() {
+      const grid = document.getElementById('bucketGrid');
+      const empty = document.getElementById('emptyState');
+      grid.innerHTML = '';
+
+      let filtered = allItems;
+      if (currentFilter !== 'all') {
+        filtered = allItems.filter(i => i.category === currentFilter);
+      }
+
+      if (filtered.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      filtered.forEach(item => {
+        grid.appendChild(createBucketItem(item));
+      });
+
+      const total = allItems.length;
+      const completed = allItems.filter(i => i.completed).length;
+      updateProgress(total, completed);
+    }
+
+    function listenToBucketList() {
+      const q = query(collection(db, 'bucketList'), orderBy('addedAt', 'desc'));
+      onSnapshot(q, (snapshot) => {
+        allItems = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          data.id = docSnap.id;
+          allItems.push(data);
+        });
+        renderItems();
+      });
+    }
+
+    async function toggleComplete(id, completed) {
+      if (completed) {
+        spawnConfetti();
+      }
+      await updateDoc(doc(db, 'bucketList', id), { completed });
+    }
+
+    async function deleteItem(id) {
+      if (confirm('Hapus item ini dari bucket list?')) {
+        await deleteDoc(doc(db, 'bucketList', id));
+      }
+    }
+
+    function spawnConfetti() {
+      const container = document.getElementById('confettiContainer');
+      const emojis = ['🎉', '✨', '💖', '🌟', '🎊', '🥳'];
+      for (let i = 0; i < 20; i++) {
+        const span = document.createElement('span');
+        span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        span.style.cssText = `
+          position: fixed;
+          font-size: ${16 + Math.random() * 16}px;
+          left: ${Math.random() * 100}vw;
+          top: -20px;
+          z-index: 10000;
+          animation: confettiFall ${2 + Math.random() * 2}s linear forwards;
+          pointer-events: none;
+        `;
+        container.appendChild(span);
+        setTimeout(() => span.remove(), 4000);
+      }
+    }
+
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes confettiFall {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        renderItems();
+      });
+    });
+
+    const modal = document.getElementById('bucketModal');
+    const addBtn = document.getElementById('addBtn');
+    const span = document.getElementsByClassName('close')[0];
+    const form = document.getElementById('bucketForm');
+
+    addBtn.onclick = () => modal.style.display = 'block';
+    span.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector('.submit-btn');
+      submitBtn.textContent = 'Menyimpan...';
+      submitBtn.disabled = true;
+
+      try {
+        await addDoc(collection(db, 'bucketList'), {
+          title: document.getElementById('bucketTitle').value,
+          description: document.getElementById('bucketDesc').value,
+          category: document.getElementById('bucketCategory').value,
+          completed: false,
+          addedAt: Timestamp.now()
+        });
+        form.reset();
+        modal.style.display = 'none';
+      } catch (err) {
+        alert('Gagal menyimpan: ' + err.message);
+      } finally {
+        submitBtn.textContent = 'Simpan';
+        submitBtn.disabled = false;
+      }
+    };
+
+    listenToBucketList();
+  </script>
+</body>
+</html>

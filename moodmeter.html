@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Meter Couple - MyMemories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8b4c8 0%, #c9b8e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #fff;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .mood-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .mood-sliders {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .slider-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .slider-card h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .mood-value {
+            font-size: 3rem;
+            margin: 15px 0;
+        }
+
+        .mood-label {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .mood-slider {
+            width: 100%;
+            height: 20px;
+            border-radius: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .mood-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .mood-slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-1 .mood-slider {
+            background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+        }
+
+        .slider-2 .mood-slider {
+            background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+        }
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 100px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .gauge {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6b6b 0deg,
+                #ff9a56 36deg,
+                #ffcd94 72deg,
+                #4ecdc4 108deg,
+                #2ecc71 144deg,
+                #27ae60 180deg
+            );
+            clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+        }
+
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 80px;
+            background: #333;
+            transform-origin: bottom center;
+            transition: transform 0.5s ease;
+            border-radius: 2px;
+        }
+
+        .gauge-center {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        .compatibility-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 20px 0 10px;
+        }
+
+        .compatibility-label {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .message-box {
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .message-match {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #c0392b;
+        }
+
+        .message-mismatch {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c3e50;
+        }
+
+        .save-btn {
+            display: block;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #f8b4c8 0%, #c9b8e8 100%);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(200, 150, 200, 0.4);
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(200, 150, 200, 0.5);
+        }
+
+        .notes-section {
+            margin-top: 20px;
+        }
+
+        .notes-section textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s;
+        }
+
+        .notes-section textarea:focus {
+            outline: none;
+            border-color: #c9b8e8;
+        }
+
+        .history-section {
+            max-width: 600px;
+            margin: 40px auto 0;
+        }
+
+        .history-section h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .history-list {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .mood-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mood-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .mood-1-icon {
+            background: linear-gradient(135deg, #f8b4c8 0%, #c9b8e8 100%);
+        }
+
+        .mood-2-icon {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .history-info h3 {
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .history-info p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .love-burst {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatUp 3s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(0.5);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .mood-sliders {
+                grid-template-columns: 1fr;
+            }
+
+            .slider-card {
+                margin-bottom: 20px;
+            }
+
+            .result-section {
+                margin: 0 10px 40px;
+            }
+
+            .gauge-container {
+                width: 150px;
+                height: 75px;
+            }
+
+            .gauge {
+                width: 150px;
+                height: 150px;
+            }
+
+            .gauge-needle {
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+
+    <div class="header">
+        <h1>Mood Meter</h1>
+        <p>Seberapa cocok mood kita hari ini?</p>
+    </div>
+
+    <div class="mood-container">
+        <div class="mood-sliders">
+            <div class="slider-card slider-1">
+                <h3>👤 Partner 1</h3>
+                <div class="mood-value" id="mood1Value">5</div>
+                <div class="mood-label" id="mood1Label">Biasa aja</div>
+                <input type="range" min="1" max="10" value="5" class="mood-slider" id="mood1Slider">
+            </div>
+            <div class="slider-card slider-2">
+                <h3>👤 Partner 2</h3>
+                <div class="mood-value" id="mood2Value">5</div>
+                <div class="mood-label" id="mood2Label">Biasa aja</div>
+                <input type="range" min="1" max="10" value="5" class="mood-slider" id="mood2Slider">
+            </div>
+        </div>
+
+        <div class="result-section">
+            <h2>Kecocokan Mood</h2>
+            <div class="gauge-container">
+                <div class="gauge"></div>
+                <div class="gauge-needle" id="gaugeNeedle"></div>
+                <div class="gauge-center"></div>
+            </div>
+            <div class="compatibility-score" id="compatibilityScore">100%</div>
+            <div class="compatibility-label" id="compatibilityLabel">Sempurna!</div>
+            <div class="message-box" id="messageBox">
+                Mood kalian sangat cocok hari ini! 💕
+            </div>
+
+            <div class="notes-section">
+                <textarea id="moodNotes" placeholder="Tambahkan catatan tentang mood hari ini..."></textarea>
+            </div>
+
+            <button class="save-btn" id="saveBtn">💾 Simpan Mood Hari Ini</button>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h2>Riwayat Mood</h2>
+        <div class="history-list" id="historyList">
+            <div class="empty-state">
+                <div class="icon">📊</div>
+                <p>Belum ada riwayat mood</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="love-burst" id="loveBurst"></div>
+
+    <script type="module">
+        import { requireAuth } from './js/auth.js';
+        import { db } from './js/firebase-config.js';
+        import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        const user = await requireAuth();
+        if (!user) throw new Error('Not authenticated');
+
+        const mood1Slider = document.getElementById('mood1Slider');
+        const mood2Slider = document.getElementById('mood2Slider');
+        const mood1Value = document.getElementById('mood1Value');
+        const mood2Value = document.getElementById('mood2Value');
+        const mood1Label = document.getElementById('mood1Label');
+        const mood2Label = document.getElementById('mood2Label');
+        const gaugeNeedle = document.getElementById('gaugeNeedle');
+        const compatibilityScore = document.getElementById('compatibilityScore');
+        const compatibilityLabel = document.getElementById('compatibilityLabel');
+        const messageBox = document.getElementById('messageBox');
+        const saveBtn = document.getElementById('saveBtn');
+        const historyList = document.getElementById('historyList');
+        const loveBurst = document.getElementById('loveBurst');
+        const moodNotes = document.getElementById('moodNotes');
+
+        const moodLabels = [
+            "Sangat Sedih", "Sedih", "Agak Sedih", "Sedih Biasa", "Biasa aja",
+            "Agak Senang", "Senang", "Sangat Senang", "Bahagia", "Sangat Bahagia", "Ekstrem Bahagia"
+        ];
+
+        const matchMessages = [
+            "Mood kalian sangat cocok! Kalian benar-benar sefrekuensi! 💕",
+            "Wah, mood kalian hampir sama! Hubungan yang harmonis! ✨",
+            "Kecocokan mood kalian luar biasa! Kalian pasangan yang serasi! 💖",
+            "Mood kalian matching banget! Ini pertanda baik! 🌟",
+            "Kalian memiliki energi yang sama hari ini! So sweet! 💝"
+        ];
+
+        const mismatchMessages = [
+            "Mood kalian sedikit berbeda. Cobalah untuk saling memahami! 💪",
+            "Tidak masalah mood berbeda, yang penting tetap saling sayang! 🤗",
+            "Coba habiskan waktu berdua untuk menyesuaikan mood! 💑",
+            "Perbedaan mood itu wajar, yang penting komunikasi! 💬",
+            "Mungkin salah satu perlu sedikit perhatian hari ini! 🥰"
+        ];
+
+        let history = [];
+
+        const historyRef = collection(db, 'moodMeterHistory');
+        const historyQuery = query(historyRef, orderBy('createdAt', 'desc'), limit(30));
+
+        onSnapshot(historyQuery, (snapshot) => {
+            history = [];
+            snapshot.forEach(doc => {
+                history.push({ id: doc.id, ...doc.data() });
+            });
+            renderHistory();
+        });
+
+        function getMoodColor(value) {
+            const colors = [
+                '#ff6b6b', '#ff7979', '#ff8c8c', '#ff9f9f', '#ffb2b2',
+                '#b8d4e3', '#a8cfdf', '#98cada', '#88c5d5', '#78c0d0', '#68bbcb'
+            ];
+            return colors[value - 1] || '#68bbcb';
+        }
+
+        function updateMood1() {
+            const value = parseInt(mood1Slider.value);
+            mood1Value.textContent = value;
+            mood1Label.textContent = moodLabels[value - 1];
+            updateCompatibility();
+        }
+
+        function updateMood2() {
+            const value = parseInt(mood2Slider.value);
+            mood2Value.textContent = value;
+            mood2Label.textContent = moodLabels[value - 1];
+            updateCompatibility();
+        }
+
+        function updateCompatibility() {
+            const mood1 = parseInt(mood1Slider.value);
+            const mood2 = parseInt(mood2Slider.value);
+            const diff = Math.abs(mood1 - mood2);
+            const avg = (mood1 + mood2) / 2;
+
+            let score, angle, label, message;
+
+            if (diff <= 2) {
+                score = 100 - (diff * 10);
+                angle = (avg / 10) * 180 - 90;
+                label = "Sangat Cocok!";
+                message = matchMessages[Math.floor(Math.random() * matchMessages.length)];
+                showLoveBurst();
+            } else if (diff <= 4) {
+                score = 100 - (diff * 15);
+                angle = (avg / 10) * 180 - 90;
+                label = "Cukup Cocok";
+                message = mismatchMessages[Math.floor(Math.random() * mismatchMessages.length)];
+            } else {
+                score = Math.max(20, 100 - (diff * 20));
+                angle = (avg / 10) * 180 - 90;
+                label = "Perlu Usaha";
+                message = mismatchMessages[Math.floor(Math.random() * mismatchMessages.length)];
+            }
+
+            compatibilityScore.textContent = score + '%';
+            compatibilityLabel.textContent = label;
+            messageBox.textContent = message;
+
+            gaugeNeedle.style.transform = `rotate(${angle}deg)`;
+
+            if (diff <= 2) {
+                messageBox.className = 'message-box message-match';
+            } else {
+                messageBox.className = 'message-box message-mismatch';
+            }
+        }
+
+        function showLoveBurst() {
+            loveBurst.innerHTML = '';
+            const hearts = ['❤️', '💕', '💖', '💗', '💝', '💘', '💞', '💓'];
+
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                loveBurst.appendChild(heart);
+            }
+
+            setTimeout(() => {
+                loveBurst.innerHTML = '';
+            }, 5000);
+        }
+
+        function renderHistory() {
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="empty-state"><div class="icon">📊</div><p>Belum ada riwayat mood</p></div>';
+                return;
+            }
+
+            const moodEmojis = ['', '😢', '😔', '😐', '🙂', '😊', '😄', '😁', '🥰', '😍', '🤩'];
+
+            historyList.innerHTML = history.map(item => {
+                const time = item.createdAt?.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
+                const m1 = moodEmojis[item.user1Mood] || '❓';
+                const m2 = moodEmojis[item.user2Mood] || '❓';
+                return `
+                <div class="history-item">
+                    <div class="mood-display">
+                        <div class="mood-icon mood-1-icon">${m1}</div>
+                        <div class="mood-icon mood-2-icon">${m2}</div>
+                    </div>
+                    <div class="history-info">
+                        <h3>Mood: ${item.user1Mood} & ${item.user2Mood}</h3>
+                        <p>${time.toLocaleString('id-ID')} ${item.notes ? '• ' + item.notes : ''}</p>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function saveMood() {
+            const mood1 = parseInt(mood1Slider.value);
+            const mood2 = parseInt(mood2Slider.value);
+            const notes = moodNotes.value;
+
+            try {
+                await addDoc(historyRef, {
+                    user1Mood: mood1,
+                    user2Mood: mood2,
+                    notes: notes,
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error('Error saving mood:', e);
+            }
+
+            saveBtn.textContent = '✅ Tersimpan!';
+            setTimeout(() => {
+                saveBtn.textContent = '💾 Simpan Mood Hari Ini';
+            }, 2000);
+
+            moodNotes.value = '';
+        }
+
+        mood1Slider.addEventListener('input', updateMood1);
+        mood2Slider.addEventListener('input', updateMood2);
+        saveBtn.addEventListener('click', saveMood);
+
+        updateMood1();
+        updateMood2();
+        renderHistory();
+    </script>
+</body>
+</html>

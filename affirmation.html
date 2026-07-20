@@ -490,8 +490,12 @@
       query,
       orderBy,
       Timestamp,
-      limit
+      limit,
+      doc,
+      getDoc,
+      setDoc
     } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -507,6 +511,31 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+    onAuthStateChanged(auth, (u) => {
+      currentUser = u;
+      if (currentUser) loadFavorites();
+    });
+
+    async function loadFavorites() {
+      if (!currentUser) return;
+      try {
+        const favDoc = await getDoc(doc(db, 'userFavorites', currentUser.uid));
+        if (favDoc.exists()) {
+          favoriteQuotes = favDoc.data().quotes || [];
+          updateFavoriteButton();
+        }
+      } catch (e) { console.error('Error loading favorites:', e); }
+    }
+
+    async function saveFavorites() {
+      if (!currentUser) return;
+      try {
+        await setDoc(doc(db, 'userFavorites', currentUser.uid), { quotes: favoriteQuotes });
+      } catch (e) { console.error('Error saving favorites:', e); }
+    }
 
     // Quote data (default quotes)
     const defaultQuotes = [
@@ -575,7 +604,7 @@
     // Current quote
     let currentQuote = null;
     let currentCategory = 'all';
-    let favoriteQuotes = JSON.parse(localStorage.getItem('favoriteQuotes')) || [];
+    let favoriteQuotes = [];
     let allQuotes = [...defaultQuotes];
     let latestQuotes = [];
 
@@ -750,8 +779,7 @@
         showNotification('Ditambahkan ke favorit');
       }
       
-      // Save to localStorage
-      localStorage.setItem('favoriteQuotes', JSON.stringify(favoriteQuotes));
+      saveFavorites();
       
       // Update button
       updateFavoriteButton();
@@ -834,5 +862,13 @@
     // Initialize
     listenToAffirmations();
   </script>
+<script type="module">
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = 'login.html';
+    else if (!["rianakhlulfadli@gmail.com","lunadindaaa2220@gmail.com"].includes(user.email)) window.location.href = 'login.html';
+  });
+</script>
 </body>
 </html>

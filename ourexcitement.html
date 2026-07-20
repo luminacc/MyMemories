@@ -465,14 +465,14 @@
     // Firebase SDK (modular)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
     // TODO: Ganti dengan config milikmu dari Firebase Console
     const firebaseConfig = {
       apiKey: "AIzaSyDX-LrJEGQxODpEelbS8Pp-vm1CegLOceY",
       authDomain: "luminac-6437a.firebaseapp.com",
       projectId: "luminac-6437a",
-      storageBucket: "luminac-6437a.firebasestorage.app",
+      storageBucket: "luminac-6437a.appspot.com",
       messagingSenderId: "476684760512",
       appId: "1:476684760512:web:8a669df2e639cba4194425",
       measurementId: "G-E903BM0C2Q"
@@ -483,6 +483,9 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+
+    // Handle redirect result
+    getRedirectResult(auth).catch(err => console.log('Redirect result:', err));
 
     // UI refs
     const loginBtn = document.getElementById('loginBtn');
@@ -508,7 +511,13 @@
     let docToHide = null;
 
     // Auth state
+    const ALLOWED_EMAILS = ["rianakhlulfadli@gmail.com", "lunadindaaa2220@gmail.com"];
     onAuthStateChanged(auth, async (user) => {
+      if (user && !ALLOWED_EMAILS.includes(user.email)) {
+        await signOut(auth);
+        alert('Akun ' + user.email + ' tidak memiliki akses.');
+        return;
+      }
       currentUser = user || null;
       if (currentUser) {
         // Logged in
@@ -539,7 +548,7 @@
     // Login
     loginBtn.addEventListener('click', async () => {
       try {
-        await signInWithPopup(auth, provider);
+        await signInWithRedirect(auth, provider);
       } catch (err) {
         alert('Gagal masuk: ' + (err?.message || err));
       }
@@ -661,21 +670,6 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
     }
-
-    const q = query(
-  collection(db, 'notes'),
-  where('uid', '==', currentUser.uid),
-  where('hidden', '==', false),
-  orderBy('date', 'desc')
-);
-
-getDocs(q)
-  .then(snapshot => {
-    console.log("Catatan berhasil dimuat:", snapshot.docs.length);
-  })
-  .catch(err => {
-    console.error("Error Firestore:", err.code, err.message);
-  });
 
   </script>
 </body>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Challenge - Luminacc</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #059669, #0d9488);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.25);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+    .header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .header-center h1 { font-size: 1.3rem; margin: 0; }
+    .header-center p { font-size: 0.75rem; margin: 3px 0 0 0; opacity: 0.85; }
+
+    .main-content {
+      padding-top: 80px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-bottom: 30px;
+    }
+
+    .today-challenge {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .today-challenge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+    }
+
+    .today-challenge .label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #10b981;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .today-challenge .challenge-emoji {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .today-challenge .challenge-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .today-challenge .challenge-desc {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 15px;
+    }
+
+    .upload-zone {
+      border: 2px dashed #10b981;
+      border-radius: 14px;
+      padding: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(16,185,129,0.05);
+    }
+
+    .upload-zone:hover {
+      border-color: #059669;
+      background: rgba(16,185,129,0.1);
+    }
+
+    .upload-zone i {
+      font-size: 2rem;
+      color: #10b981;
+      margin-bottom: 8px;
+    }
+
+    .upload-zone p {
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .upload-zone input { display: none; }
+
+    .preview-img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .submit-challenge-btn {
+      display: none;
+      margin: 15px auto 0;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-challenge-btn:hover { transform: scale(1.03); }
+
+    .gallery-section h3 {
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .challenge-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .gallery-card {
+      background: rgba(255,255,255,0.92);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      animation: fadeUp 0.4s ease-out;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-card:hover { transform: translateY(-3px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gallery-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-card img:hover { transform: scale(1.02); }
+
+    .gallery-card-info {
+      padding: 12px 14px;
+    }
+
+    .gallery-card-info h4 {
+      font-size: 0.9rem;
+      color: #333;
+      margin-bottom: 3px;
+    }
+
+    .gallery-card-info .card-date {
+      font-size: 0.72rem;
+      color: #999;
+    }
+
+    .gallery-card-info .card-challenge {
+      font-size: 0.75rem;
+      color: #10b981;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .empty-gallery {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: white;
+      opacity: 0.7;
+      padding: 30px;
+    }
+
+    .empty-gallery i { font-size: 3rem; margin-bottom: 10px; display: block; }
+
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-overlay.active { display: flex; }
+
+    .lightbox-overlay img {
+      max-width: 95%;
+      max-height: 85vh;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: transform 0.3s;
+    }
+
+    .lightbox-close:hover { transform: scale(1.2); }
+
+    @media (max-width: 768px) {
+      header { padding: 10px 15px; }
+      .header-center h1 { font-size: 1.1rem; }
+      .today-challenge { padding: 18px; }
+      .challenge-gallery { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+      .gallery-card img { height: 160px; }
+    }
+
+    @media (max-width: 480px) {
+      .challenge-gallery { grid-template-columns: 1fr; }
+      .gallery-card img { height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+    <div class="header-center">
+      <h1>Photo Challenge</h1>
+      <p>Tantangan foto harian</p>
+    </div>
+    <div style="width: 80px;"></div>
+  </header>
+
+  <div class="main-content">
+    <div class="today-challenge">
+      <div class="label">Tantangan Hari Ini</div>
+      <div class="challenge-emoji" id="challengeEmoji"></div>
+      <div class="challenge-text" id="challengeText"></div>
+      <div class="challenge-desc" id="challengeDesc"></div>
+
+      <div class="upload-zone" id="uploadZone">
+        <i class="fas fa-camera"></i>
+        <p>Klik untuk upload foto tantangan</p>
+        <input type="file" id="photoInput" accept="image/*" capture="environment">
+      </div>
+      <img class="preview-img" id="previewImg" alt="Preview">
+      <button class="submit-challenge-btn" id="submitBtn">
+        <i class="fas fa-check"></i> Kirim Tantangan
+      </button>
+    </div>
+
+    <div class="gallery-section">
+      <h3><i class="fas fa-images" style="margin-right:6px;"></i>Galeri Tantangan</h3>
+      <div class="challenge-gallery" id="challengeGallery">
+        <div class="empty-gallery">
+          <i class="fas fa-camera-retro"></i>
+          <p>Belum ada tantangan yang diselesaikan</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="Full photo">
+  </div>
+
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    import { db } from './js/firebase-config.js';
+    import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const user = await requireAuth();
+    if (!user) throw new Error('Not authenticated');
+
+    const challenges = [
+      { emoji: '🍽️', text: 'Foto Makan Siang', desc: 'Pamerkan makan siangmu hari ini!' },
+      { emoji: '🤳', text: 'Selfie Bareng', desc: 'Ambil selfie bersama pasangan!' },
+      { emoji: '💼', text: 'Foto Tempat Kerja', desc: 'Tunjukkan meja kerjamu!' },
+      { emoji: '🐱', text: 'Foto Hewan Peliharaan', desc: 'Pamerkan hewan peliharaanmu!' },
+      { emoji: '🌅', text: 'Foto Pemandangan', desc: 'Abadikan pemandangan indah!' },
+      { emoji: '👟', text: 'Foto Sepatu Hari Ini', desc: 'Sepatu apa yang kamu pakai?' },
+      { emoji: '☕', text: 'Foto Minuman Favorit', desc: 'Apa minumanmu hari ini?' },
+      { emoji: '📚', text: 'Foto Buku yang Dibaca', desc: 'Buku apa yang sedang kamu baca?' },
+      { emoji: '🎵', text: 'Screenshot Lagu Favorit', desc: 'Lagu apa yang kamu dengar?' },
+      { emoji: '🌺', text: 'Foto Bunga', desc: 'Temukan bunga cantik di sekitarmu!' },
+      { emoji: '🌆', text: 'Foto Senja', desc: 'Abadikan keindahan senja!' },
+      { emoji: '🎂', text: 'Foto Kue/Camilan', desc: 'Camilan apa yang kamu nikmati?' },
+    ];
+
+    const today = new Date();
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    const todayChallenge = challenges[dayOfYear % challenges.length];
+
+    document.getElementById('challengeEmoji').textContent = todayChallenge.emoji;
+    document.getElementById('challengeText').textContent = todayChallenge.text;
+    document.getElementById('challengeDesc').textContent = todayChallenge.desc;
+
+    const uploadZone = document.getElementById('uploadZone');
+    const photoInput = document.getElementById('photoInput');
+    const previewImg = document.getElementById('previewImg');
+    const submitBtn = document.getElementById('submitBtn');
+    const challengeGallery = document.getElementById('challengeGallery');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    let selectedFile = null;
+    let selectedDataUrl = null;
+
+    uploadZone.addEventListener('click', () => photoInput.click());
+
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        selectedDataUrl = ev.target.result;
+        previewImg.src = selectedDataUrl;
+        previewImg.style.display = 'block';
+        submitBtn.style.display = 'block';
+        uploadZone.querySelector('p').textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const challengesRef = collection(db, 'photoChallenges');
+    const q = query(challengesRef, orderBy('createdAt', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
+      challengeGallery.innerHTML = '';
+      if (snapshot.empty) {
+        challengeGallery.innerHTML = `
+          <div class="empty-gallery">
+            <i class="fas fa-camera-retro"></i>
+            <p>Belum ada tantangan yang diselesaikan</p>
+          </div>`;
+        return;
+      }
+
+      snapshot.forEach(docSnap => {
+        const ch = docSnap.data();
+        const card = document.createElement('div');
+        card.className = 'gallery-card';
+
+        const displayDate = ch.createdAt
+          ? (ch.createdAt.toDate ? ch.createdAt.toDate() : new Date(ch.createdAt)).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
+          : '';
+
+        card.innerHTML = `
+          <img src="${ch.photo}" alt="${escapeHtml(ch.challenge)}" data-full="${ch.photo}">
+          <div class="gallery-card-info">
+            <h4>${escapeHtml(user.displayName || 'Kita')}</h4>
+            <div class="card-challenge">${escapeHtml(ch.challenge)}</div>
+            <div class="card-date">${displayDate}</div>
+          </div>`;
+
+        card.querySelector('img').addEventListener('click', () => {
+          lightboxImg.src = ch.photo;
+          lightbox.classList.add('active');
+        });
+
+        challengeGallery.appendChild(card);
+      });
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      if (!selectedDataUrl) return;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+      try {
+        await addDoc(challengesRef, {
+          challenge: todayChallenge.text,
+          photo: selectedDataUrl,
+          date: today.toISOString().split('T')[0],
+          uid: user.uid,
+          senderName: user.displayName || user.email,
+          createdAt: serverTimestamp()
+        });
+
+        previewImg.style.display = 'none';
+        submitBtn.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> Kirim Tantangan';
+        uploadZone.querySelector('p').textContent = 'Klik untuk upload foto tantangan';
+        photoInput.value = '';
+        selectedFile = null;
+        selectedDataUrl = null;
+      } catch (e) {
+        alert('Gagal mengirim: ' + e.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> Kirim Tantangan';
+      }
+    });
+
+    lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('active'); });
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

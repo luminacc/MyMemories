@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesan Suara - Luminacc</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #a855f7 0%, #d946ef 50%, #ec4899 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #9333ea, #c026d3);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.25);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .back-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+    .header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .header-center h1 { font-size: 1.3rem; margin: 0; }
+    .header-center p { font-size: 0.75rem; margin: 3px 0 0 0; opacity: 0.85; }
+
+    .main-content {
+      padding-top: 80px;
+      max-width: 700px;
+      margin: 0 auto;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-bottom: 120px;
+    }
+
+    .recorder-section {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      margin-bottom: 20px;
+    }
+
+    .recorder-section h2 {
+      color: #9333ea;
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+
+    .recorder-section p {
+      color: #888;
+      font-size: 0.82rem;
+      margin-bottom: 20px;
+    }
+
+    .waveform-container {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      margin-bottom: 20px;
+      min-height: 80px;
+    }
+
+    .wave-bar {
+      width: 4px;
+      background: linear-gradient(180deg, #a855f7, #ec4899);
+      border-radius: 2px;
+      transition: height 0.1s ease;
+      height: 10px;
+    }
+
+    .recording .wave-bar {
+      animation: waveAnim 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes waveAnim {
+      from { height: 10px; }
+      to { height: var(--max-h, 50px); }
+    }
+
+    .record-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 4px solid #a855f7;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      position: relative;
+    }
+
+    .record-btn i {
+      font-size: 28px;
+      color: #a855f7;
+      transition: all 0.3s ease;
+    }
+
+    .record-btn.recording {
+      border-color: #ef4444;
+      animation: recordPulse 1s infinite;
+    }
+
+    .record-btn.recording i {
+      color: #ef4444;
+    }
+
+    @keyframes recordPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+      50% { box-shadow: 0 0 0 15px rgba(239,68,68,0); }
+    }
+
+    .record-timer {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .record-status {
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .record-status.active { color: #ef4444; font-weight: 600; }
+
+    .messages-section h3 {
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .voice-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .voice-msg-card {
+      background: rgba(255,255,255,0.92);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeUp 0.4s ease-out;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .voice-msg-play {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .voice-msg-play:hover { transform: scale(1.1); }
+    .voice-msg-play.playing {
+      animation: playPulse 1s infinite;
+    }
+
+    @keyframes playPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(168,85,247,0); }
+    }
+
+    .voice-msg-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .voice-msg-sender {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #9333ea;
+      margin-bottom: 2px;
+    }
+
+    .voice-msg-time {
+      font-size: 0.7rem;
+      color: #999;
+    }
+
+    .voice-msg-progress {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .voice-msg-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a855f7, #ec4899);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .voice-msg-duration {
+      font-size: 0.7rem;
+      color: #999;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .empty-voice {
+      text-align: center;
+      color: white;
+      opacity: 0.7;
+      padding: 30px;
+    }
+
+    .empty-voice i { font-size: 3rem; margin-bottom: 10px; display: block; }
+
+    @media (max-width: 768px) {
+      header { padding: 10px 15px; }
+      .header-center h1 { font-size: 1.1rem; }
+      .recorder-section { padding: 20px 15px; }
+      .voice-msg-card { padding: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .record-btn { width: 60px; height: 60px; }
+      .record-btn i { font-size: 24px; }
+      .waveform-container { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+    <div class="header-center">
+      <h1>Pesan Suara</h1>
+      <p>Rekam pesan suara cinta</p>
+    </div>
+    <div style="width: 80px;"></div>
+  </header>
+
+  <div class="main-content">
+    <div class="recorder-section">
+      <h2><i class="fas fa-microphone" style="margin-right:6px;"></i>Rekam Pesan</h2>
+      <p>Tekan tombol untuk mulai merekam</p>
+
+      <div class="waveform-container" id="waveform"></div>
+
+      <button class="record-btn" id="recordBtn">
+        <i class="fas fa-microphone"></i>
+      </button>
+
+      <div class="record-timer" id="recordTimer">00:00</div>
+      <div class="record-status" id="recordStatus">Siap merekam</div>
+    </div>
+
+    <div class="messages-section">
+      <h3><i class="fas fa-headphones" style="margin-right:6px;"></i>Pesan Suara</h3>
+      <div class="voice-messages" id="voiceMessages">
+        <div class="empty-voice">
+          <i class="fas fa-microphone-slash"></i>
+          <p>Belum ada pesan suara</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    import { db } from './js/firebase-config.js';
+    import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    const user = await requireAuth();
+    if (!user) throw new Error('Not authenticated');
+
+    const waveform = document.getElementById('waveform');
+    const recordBtn = document.getElementById('recordBtn');
+    const recordTimer = document.getElementById('recordTimer');
+    const recordStatus = document.getElementById('recordStatus');
+    const voiceMessagesEl = document.getElementById('voiceMessages');
+
+    const messagesRef = collection(db, 'voiceMessages');
+    const q = query(messagesRef, orderBy('timestamp', 'desc'));
+
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let timerInterval = null;
+    let seconds = 0;
+    let audioContext = null;
+    let analyser = null;
+    let animFrame = null;
+    let waveBars = [];
+
+    const WAVE_BARS = 30;
+    for (let i = 0; i < WAVE_BARS; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'wave-bar';
+      bar.style.setProperty('--max-h', (15 + Math.random() * 40) + 'px');
+      bar.style.animationDelay = (i * 0.05) + 's';
+      waveform.appendChild(bar);
+      waveBars.push(bar);
+    }
+
+    function resetWaves() {
+      waveBars.forEach(b => { b.style.height = '10px'; });
+    }
+
+    function drawWaveform(dataArray) {
+      if (!isRecording) return;
+      const step = Math.floor(dataArray.length / WAVE_BARS);
+      for (let i = 0; i < WAVE_BARS; i++) {
+        const val = dataArray[i * step] || 0;
+        const h = Math.max(10, (val / 255) * 60);
+        waveBars[i].style.height = h + 'px';
+        waveBars[i].style.animation = 'none';
+      }
+      animFrame = requestAnimationFrame(() => {
+        if (analyser) {
+          const d = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(d);
+          drawWaveform(d);
+        }
+      });
+    }
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    recordBtn.addEventListener('click', async () => {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        await startRecording();
+      }
+    });
+
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        seconds = 0;
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+
+        mediaRecorder.onstop = async () => {
+          stream.getTracks().forEach(t => t.stop());
+          if (audioContext) { audioContext.close(); audioContext = null; }
+          cancelAnimationFrame(animFrame);
+          resetWaves();
+
+          const blob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+          reader.onload = async () => {
+            const base64 = reader.result;
+            try {
+              await addDoc(messagesRef, {
+                audio: base64,
+                sender: user.uid,
+                senderName: user.displayName || user.email,
+                timestamp: serverTimestamp(),
+                duration: seconds
+              });
+            } catch (e) {
+              console.error('Error saving voice:', e);
+            }
+          };
+          reader.readAsDataURL(blob);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        recordBtn.classList.add('recording');
+        recordBtn.innerHTML = '<i class="fas fa-stop"></i>';
+        recordStatus.textContent = 'Merekam...';
+        recordStatus.classList.add('active');
+
+        timerInterval = setInterval(() => {
+          seconds++;
+          recordTimer.textContent = formatTime(seconds);
+        }, 1000);
+
+        const d = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(d);
+        drawWaveform(d);
+      } catch (err) {
+        alert('Tidak dapat mengakses mikrofon: ' + err.message);
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      isRecording = false;
+      clearInterval(timerInterval);
+      recordBtn.classList.remove('recording');
+      recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+      recordStatus.textContent = 'Pesan tersimpan!';
+      recordStatus.classList.remove('active');
+      setTimeout(() => {
+        recordStatus.textContent = 'Siap merekam';
+        recordTimer.textContent = '00:00';
+      }, 2000);
+    }
+
+    let currentAudio = null;
+    let currentPlayBtn = null;
+    let currentProgressFill = null;
+    let progressInterval = null;
+
+    onSnapshot(q, (snapshot) => {
+      voiceMessagesEl.innerHTML = '';
+      if (snapshot.empty) {
+        voiceMessagesEl.innerHTML = `
+          <div class="empty-voice">
+            <i class="fas fa-microphone-slash"></i>
+            <p>Belum ada pesan suara</p>
+          </div>`;
+        return;
+      }
+
+      snapshot.forEach(docMsg => {
+        const msg = docMsg.data();
+        const card = document.createElement('div');
+        card.className = 'voice-msg-card';
+
+        const displayTime = msg.timestamp
+          ? (msg.timestamp.toDate ? msg.timestamp.toDate() : new Date(msg.timestamp)).toLocaleString('id-ID', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+          : '';
+
+        card.innerHTML = `
+          <button class="voice-msg-play" data-id="${docMsg.id}"><i class="fas fa-play"></i></button>
+          <div class="voice-msg-info">
+            <div class="voice-msg-sender">${escapeHtml(msg.senderName || 'Unknown')}</div>
+            <div class="voice-msg-time">${displayTime}</div>
+            <div class="voice-msg-progress"><div class="voice-msg-progress-fill" data-pf="${docMsg.id}"></div></div>
+          </div>
+          <div class="voice-msg-duration">${formatTime(msg.duration || 0)}</div>`;
+
+        const playBtn = card.querySelector('.voice-msg-play');
+        const progressFill = card.querySelector('.voice-msg-progress-fill');
+
+        playBtn.addEventListener('click', () => {
+          if (currentAudio && !currentAudio.paused) {
+            currentAudio.pause();
+            if (currentPlayBtn) { currentPlayBtn.classList.remove('playing'); currentPlayBtn.innerHTML = '<i class="fas fa-play"></i>'; }
+            if (progressInterval) clearInterval(progressInterval);
+            if (playBtn === currentPlayBtn) { currentAudio = null; currentPlayBtn = null; return; }
+          }
+
+          const audio = new Audio(msg.audio);
+          currentAudio = audio;
+          currentPlayBtn = playBtn;
+          currentProgressFill = progressFill;
+
+          playBtn.classList.add('playing');
+          playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+          audio.addEventListener('loadedmetadata', () => {
+            progressInterval = setInterval(() => {
+              if (audio.duration) {
+                progressFill.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+              }
+            }, 100);
+          });
+
+          audio.addEventListener('ended', () => {
+            playBtn.classList.remove('playing');
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            progressFill.style.width = '0%';
+            clearInterval(progressInterval);
+            currentAudio = null;
+            currentPlayBtn = null;
+          });
+
+          audio.play();
+        });
+
+        voiceMessagesEl.appendChild(card);
+      });
+    });
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

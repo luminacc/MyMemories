@@ -298,23 +298,18 @@
     }
   </style>
 
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#424242">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-E903BM0C2Q"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-E903BM0C2Q');
-
-    // Tambahan event manual untuk test
-    gtag('event', 'test_event', {
-      'event_category': 'debug',
-      'event_label': 'manual check'
-    });
   </script>
-
-
 
 </head>
 
@@ -324,40 +319,71 @@
     <div class="heart-divider">❤️ ❤️ ❤️</div>
     <p class="date">January 19, 2025</p>
 
+    <div class="section-title">📸 Galeri & Kenangan</div>
     <div class="cards">
-      <a href="memories.html" class="card">
-        <i class="fas fa-camera-retro"></i>
-        <span>My Picture</span>
-      </a>
-      <a href="mypicture.html" class="card">
-        <i class="fas fa-images"></i>
-        <span>Memories</span>
-      </a>
-      <a href="ourexcitement.html" class="card">
-        <i class="fas fa-book-open"></i>
-        <span>Your Diary</span>
-      </a>
+      <a href="memories.html" class="card"><i class="fas fa-camera-retro"></i><span>My Picture</span></a>
+      <a href="mypicture.html" class="card"><i class="fas fa-images"></i><span>Memories</span></a>
+      <a href="photobook.html" class="card"><i class="fas fa-book"></i><span>Buku Kenangan</span></a>
+      <a href="photochallenge.html" class="card"><i class="fas fa-camera"></i><span>Photo Challenge</span></a>
     </div>
 
+    <div class="section-title">✍️ Pribadi & Catatan</div>
     <div class="cards">
-      <a href="timeline.html" class="card">
-        <i class="fas fa-heart"></i>
-        <span>Love Timeline</span>
-      </a>
-      <a href="wishlist.html" class="card">
-        <i class="fas fa-star"></i>
-        <span>Wishlist</span>
-      </a>
-      <a href="quiz.html" class="card">
-        <i class="fas fa-gamepad"></i>
-        <span>Quiz Games</span>
-      </a>
-      <a href="affirmation.html" class="card">
-        <i class="fas fa-spa"></i>
-        <span>Daily Affirmation</span>
-      </a>
+      <a href="ourexcitement.html" class="card"><i class="fas fa-book-open"></i><span>Your Diary</span></a>
+      <a href="lovejournal.html" class="card"><i class="fas fa-feather-alt"></i><span>Jurnal Cinta</span></a>
+      <a href="affirmation.html" class="card"><i class="fas fa-spa"></i><span>Daily Affirmation</span></a>
+      <a href="loveletter.html" class="card"><i class="fas fa-envelope-open-text"></i><span>Surat Cinta</span></a>
+    </div>
+
+    <div class="section-title">❤️ Perjalanan Cinta</div>
+    <div class="cards">
+      <a href="timeline.html" class="card"><i class="fas fa-heart"></i><span>Love Timeline</span></a>
+      <a href="lovestory.html" class="card"><i class="fas fa-book-reader"></i><span>Kisah Cinta</span></a>
+      <a href="countdown.html" class="card"><i class="fas fa-hourglass-half"></i><span>Countdown</span></a>
+      <a href="anniversary.html" class="card"><i class="fas fa-glass-cheers"></i><span>Anniversary</span></a>
+    </div>
+
+    <div class="section-title">🎯 Aktivitas Berdua</div>
+    <div class="cards">
+      <a href="wishlist.html" class="card"><i class="fas fa-star"></i><span>Wishlist</span></a>
+      <a href="bucketlist.html" class="card"><i class="fas fa-flag-checkered"></i><span>Bucket List</span></a>
+      <a href="quiz.html" class="card"><i class="fas fa-gamepad"></i><span>Quiz Games</span></a>
+      <a href="physicalchallenge.html" class="card"><i class="fas fa-hand-holding-heart"></i><span>Tantangan Fisik</span></a>
+      <a href="nightplanner.html" class="card"><i class="fas fa-moon"></i><span>Night Planner</span></a>
+    </div>
+
+    <div class="section-title">💬 Komunikasi & Mood</div>
+    <div class="cards">
+      <a href="realchat.html" class="card"><i class="fas fa-comments"></i><span>Chat Kita</span></a>
+      <a href="moodtracker.html" class="card"><i class="fas fa-smile"></i><span>Mood Tracker</span></a>
+      <a href="moodmeter.html" class="card"><i class="fas fa-chart-line"></i><span>Mood Meter</span></a>
+      <a href="voicemessage.html" class="card"><i class="fas fa-microphone"></i><span>Pesan Suara</span></a>
+      <a href="dailylovenotif.html" class="card"><i class="fas fa-bell"></i><span>Notifikasi Cinta</span></a>
+    </div>
+
+    <div class="section-title">🎵 Musik, Peta & Lainnya</div>
+    <div class="cards">
+      <a href="playlist.html" class="card"><i class="fas fa-music"></i><span>Playlist Kita</span></a>
+      <a href="lovemap.html" class="card"><i class="fas fa-map-marked-alt"></i><span>Peta Cinta</span></a>
+      <a href="giftbox.html" class="card"><i class="fas fa-gift"></i><span>Kotak Hadiah</span></a>
+      <a href="secretcode.html" class="card"><i class="fas fa-key"></i><span>Kode Rahasia</span></a>
+      <a href="sharedcalendar.html" class="card"><i class="fas fa-calendar-alt"></i><span>Kalender</span></a>
     </div>
   </main>
+
+  <script type="module">
+    import { auth, ALLOWED_EMAILS } from './js/firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.href = 'login.html';
+      else if (!ALLOWED_EMAILS.includes(user.email)) window.location.href = 'login.html';
+    });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    }
+  </script>
 
   <script>
     const messages = [

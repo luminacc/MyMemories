@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi Cinta Harian - MyMemories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8a5c2 0%, #f78d6e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #fff;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .bell-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: ring 2s infinite;
+        }
+
+        @keyframes ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(10deg); }
+            20% { transform: rotate(-10deg); }
+            40% { transform: rotate(5deg); }
+            50% { transform: rotate(-5deg); }
+            60% { transform: rotate(0deg); }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #e74c3c;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-picker {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .time-picker label {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .time-picker input {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .time-picker input:focus {
+            outline: none;
+            border-color: #f8a5c2;
+        }
+
+        .days-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .day-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .day-btn:hover {
+            border-color: #f8a5c2;
+        }
+
+        .day-btn.active {
+            background: linear-gradient(135deg, #f8a5c2 0%, #f78d6e 100%);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .save-time-btn {
+            display: block;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #f8a5c2 0%, #f78d6e 100%);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(248, 165, 194, 0.4);
+            transition: all 0.3s;
+        }
+
+        .save-time-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(248, 165, 194, 0.5);
+        }
+
+        .message-pool {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .message-item:hover {
+            background: #f9f9f9;
+        }
+
+        .message-item:last-child {
+            border-bottom: none;
+        }
+
+        .message-icon {
+            font-size: 2rem;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-content h3 {
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .message-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .test-btn {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .test-btn:hover {
+            background: #2980b9;
+        }
+
+        .test-btn.active {
+            background: #27ae60;
+        }
+
+        .upcoming-section h2 {
+            color: #e74c3c;
+        }
+
+        .upcoming-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe0d0 100%);
+            border-radius: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .upcoming-icon {
+            font-size: 2.5rem;
+        }
+
+        .upcoming-info h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .upcoming-info p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .notification-preview {
+            background: linear-gradient(135deg, #fff 0%, #fff5f0 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-preview h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .preview-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .preview-icon {
+            font-size: 3rem;
+        }
+
+        .preview-text h4 {
+            color: #e74c3c;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .preview-text p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            margin-left: auto;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #f8a5c2 0%, #f78d6e 100%);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .notification-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .notification-status h3 {
+            flex: 1;
+            color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .time-picker {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .days-selector {
+                justify-content: center;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .message-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+
+    <div class="header">
+        <div class="bell-icon">🔔</div>
+        <h1>Notifikasi Cinta Harian</h1>
+        <p>Pesan cinta setiap hari untukmu</p>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>⏰ Pengaturan Waktu</h2>
+            <div class="notification-status">
+                <h3>Notifikasi Aktif</h3>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="time-picker">
+                <label for="notifTime">Waktu Notifikasi:</label>
+                <input type="time" id="notifTime" value="08:00">
+            </div>
+            <div class="days-selector">
+                <button class="day-btn active" data-day="0">Minggu</button>
+                <button class="day-btn active" data-day="1">Senin</button>
+                <button class="day-btn active" data-day="2">Selasa</button>
+                <button class="day-btn active" data-day="3">Rabu</button>
+                <button class="day-btn active" data-day="4">Kamis</button>
+                <button class="day-btn active" data-day="5">Jumat</button>
+                <button class="day-btn active" data-day="6">Sabtu</button>
+            </div>
+            <button class="save-time-btn" id="saveTimeBtn">💾 Simpan Pengaturan</button>
+        </div>
+
+        <div class="section upcoming-section">
+            <h2>📅 Notifikasi Mendatang</h2>
+            <div class="upcoming-list" id="upcomingList">
+                <div class="empty-state">
+                    <div class="icon">📋</div>
+                    <p>Belum ada notifikasi terjadwal</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💌 Pesan Cinta</h2>
+            <div class="message-pool" id="messagePool"></div>
+        </div>
+
+        <div class="section">
+            <h2>👁️ Preview Notifikasi</h2>
+            <div class="notification-preview">
+                <h3>Contoh tampilan notifikasi:</h3>
+                <div class="preview-content">
+                    <div class="preview-icon">💌</div>
+                    <div class="preview-text">
+                        <h4>MyMemories</h4>
+                        <p id="previewMessage">Pilih pesan untuk melihat preview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAuth } from './js/auth.js';
+        import { db } from './js/firebase-config.js';
+        import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        const user = await requireAuth();
+        if (!user) throw new Error('Not authenticated');
+
+        const loveMessages = [
+            { icon: "💕", title: "Selamat Pagi!", message: "Hari ini adalah hari yang indah untuk mencintaimu lebih dalam." },
+            { icon: "💖", title: "Untukmu", message: "Kamu adalah alasan aku tersenyum setiap hari." },
+            { icon: "🌹", title: "Romantis", message: "Seperti bunga yang mekar, cinta kita semakin indah seiring waktu." },
+            { icon: "✨", title: "Inspirasi", message: "Di matamu, aku menemukan dunia yang penuh keajaiban." },
+            { icon: "💑", title: "Bersama", message: "Setiap momen bersamamu adalah hadiah terindah dalam hidupku." },
+            { icon: "❤️", title: "Kasih Sayang", message: "Aku mencintaimu bukan hanya karena siapa kamu, tapi karena siapa aku saat bersamamu." },
+            { icon: "🌟", title: "Cahaya", message: "Kamu adalah cahaya yang menerangi hari-hariku yang gelap." },
+            { icon: "🤗", title: "Pelukan", message: "Aku merindukanmu, pelukmu, dan kehangatanmu di setiap detik." },
+            { icon: "💋", title: "Cinta", message: "Ciuman dariku untukmu, sebagai tanda betapa aku mencintaimu." },
+            { icon: "🎂", title: "Manis", message: "Hidupmu manis seperti cokelat, dan aku ingin menikmatinya selamanya." },
+            { icon: "🌈", title: "Pelangi", message: "Setelah hujan, selalu ada pelangi. Kamu adalah pelangiku setelah badai." },
+            { icon: "🎵", title: "Melodi", message: "Jika cinta adalah lagu, kamu adalah melodi terindah yang pernah kudengar." },
+            { icon: "🦋", title: "Kebebasan", message: "Bersamamu, aku merasa bebas menjadi diriku yang sebenarnya." },
+            { icon: "☀️", title: "Cerah", message: "Senyummu menerangi hari-hariku seperti matahari yang hangat." },
+            { icon: "🌙", title: "Malam", message: "Di malam yang dingin, kamu adalah kehangatanku." },
+            { icon: "💫", title: "Bintang", message: "Jika aku adalah bintang, kamu adalah langit yang memelukku." },
+            { icon: "🌺", title: "Bunga", message: "Kamu adalah bunga yang paling indah di taman kehidupanku." },
+            { icon: "💝", title: "Hatiku", message: "Seluruh hatiku adalah milikmu, sekarang dan selamanya." },
+            { icon: "🥰", title: "Sayang", message: "Aku sangat sayang kamu, lebih dari kata-kata yang bisa ungkapkan." },
+            { icon: "😍", title: "Tercinta", message: "Kamu membuatku merasa menjadi orang yang paling beruntung di dunia." }
+        ];
+
+        const messagePool = document.getElementById('messagePool');
+        const upcomingList = document.getElementById('upcomingList');
+        const previewMessage = document.getElementById('previewMessage');
+        const notifTime = document.getElementById('notifTime');
+        const notificationToggle = document.getElementById('notificationToggle');
+        const saveTimeBtn = document.getElementById('saveTimeBtn');
+        const dayBtns = document.querySelectorAll('.day-btn');
+
+        let settings = { time: '08:00', days: [0, 1, 2, 3, 4, 5, 6], enabled: true };
+
+        const settingsRef = doc(db, 'loveNotificationSettings', user.uid);
+        const settingsSnap = await getDoc(settingsRef);
+        if (settingsSnap.exists()) {
+            settings = settingsSnap.data();
+        }
+
+        function renderMessagePool() {
+            messagePool.innerHTML = loveMessages.map((msg, index) => `
+                <div class="message-item">
+                    <div class="message-icon">${msg.icon}</div>
+                    <div class="message-content">
+                        <h3>${msg.title}</h3>
+                        <p>${msg.message}</p>
+                    </div>
+                    <div class="message-actions">
+                        <button class="action-btn test-btn" data-index="${index}">Tes</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.test-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    testNotification(loveMessages[index]);
+                    e.target.classList.add('active');
+                    setTimeout(() => e.target.classList.remove('active'), 2000);
+                });
+            });
+        }
+
+        function testNotification(msg) {
+            previewMessage.textContent = msg.message;
+
+            if ('Notification' in window) {
+                if (Notification.permission === 'granted') {
+                    new Notification(msg.title, {
+                        body: msg.message,
+                        icon: '💌'
+                    });
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification(msg.title, {
+                                body: msg.message,
+                                icon: '💌'
+                            });
+                        }
+                    });
+                }
+            }
+        }
+
+        function renderUpcoming() {
+            if (!settings.enabled) {
+                upcomingList.innerHTML = '<div class="empty-state"><div class="icon">🔕</div><p>Notifikasi dinonaktifkan</p></div>';
+                return;
+            }
+
+            const now = new Date();
+            const upcoming = [];
+            const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+            for (let i = 0; i < 7; i++) {
+                const checkDate = new Date(now);
+                checkDate.setDate(checkDate.getDate() + i);
+
+                if (settings.days.includes(checkDate.getDay())) {
+                    const [hours, minutes] = settings.time.split(':');
+                    checkDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+                    if (checkDate > now) {
+                        const randomMsg = loveMessages[Math.floor(Math.random() * loveMessages.length)];
+                        upcoming.push({
+                            date: checkDate,
+                            message: randomMsg
+                        });
+                    }
+                }
+            }
+
+            if (upcoming.length === 0) {
+                upcomingList.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>Tidak ada notifikasi dalam 7 hari ke depan</p></div>';
+                return;
+            }
+
+            upcomingList.innerHTML = upcoming.slice(0, 5).map(item => `
+                <div class="upcoming-item">
+                    <div class="upcoming-icon">${item.message.icon}</div>
+                    <div class="upcoming-info">
+                        <h3>${item.message.title}</h3>
+                        <p>${dayNames[item.date.getDay()]}, ${item.date.toLocaleDateString('id-ID')} • ${settings.time}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadSettings() {
+            notifTime.value = settings.time;
+            notificationToggle.checked = settings.enabled;
+
+            dayBtns.forEach(btn => {
+                const day = parseInt(btn.dataset.day);
+                if (settings.days.includes(day)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        async function saveSettings() {
+            settings.time = notifTime.value;
+            settings.enabled = notificationToggle.checked;
+
+            const selectedDays = [];
+            dayBtns.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    selectedDays.push(parseInt(btn.dataset.day));
+                }
+            });
+            settings.days = selectedDays;
+
+            try {
+                await setDoc(settingsRef, { ...settings, updatedAt: serverTimestamp() }, { merge: true });
+            } catch (e) {
+                console.error('Error saving settings:', e);
+            }
+
+            renderUpcoming();
+
+            saveTimeBtn.textContent = '✅ Tersimpan!';
+            setTimeout(() => {
+                saveTimeBtn.textContent = '💾 Simpan Pengaturan';
+            }, 2000);
+        }
+
+        dayBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('active');
+            });
+        });
+
+        saveTimeBtn.addEventListener('click', saveSettings);
+
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        renderMessagePool();
+        loadSettings();
+        renderUpcoming();
+    </script>
+</body>
+</html>
