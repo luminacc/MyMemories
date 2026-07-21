@@ -1,0 +1,196 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Chat
+    match /chatMessages/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Pesan Suara
+    match /voiceMessages/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Wishlist
+    match /wishlistItems/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Timeline
+    match /timelineEvents/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Kalender
+    match /calendarEvents/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Playlist
+    match /playlistItems/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Kode Rahasia
+    match /secretCodes/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Kotak Hadiah
+    match /gifts/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Night Planner
+    match /nightPlans/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Affirmation
+    match /affirmations/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Kisah Cinta
+    match /loveChapters/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Jurnal Cinta
+    match /loveJournals/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Peta Cinta
+    match /loveLocations/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Mood Tracker
+    match /moodEntries/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Mood Meter History
+    match /moodMeterHistory/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Photo Challenge
+    match /photoChallenges/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Physical Challenge History
+    match /physicalChallengeHistory/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Bucket List
+    match /bucketList/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Diary / Our Excitement
+    match /notes/{docId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Notifikasi Settings (per user)
+    match /loveNotificationSettings/{userId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+
+    // Favorit (per user)
+    match /userFavorites/{userId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.email in [
+          "rianakhlulfadli@gmail.com",
+          "lunadindaaa2220@gmail.com"
+        ];
+    }
+  }
+}

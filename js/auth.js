@@ -1,5 +1,5 @@
 import { auth, ALLOWED_EMAILS } from './firebase-config.js';
-import { onAuthStateChanged, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { onAuthStateChanged, signInWithRedirect, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
 const provider = new GoogleAuthProvider();
 
@@ -44,15 +44,6 @@ export function getCurrentUser() {
 
 export async function doLogin() {
   try {
-    const result = await getRedirectResult(auth);
-    if (result && result.user) {
-      if (!isAllowedEmail(result.user.email)) {
-        await signOut(auth);
-        alert('Akun ' + result.user.email + ' tidak memiliki akses.');
-        return null;
-      }
-      return result.user;
-    }
     await signInWithRedirect(auth, provider);
   } catch (err) {
     alert('Gagal login: ' + (err.message || err));

@@ -466,6 +466,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
     import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { ALLOWED_EMAILS } from './js/firebase-config.js';
 
     // TODO: Ganti dengan config milikmu dari Firebase Console
     const firebaseConfig = {
@@ -511,7 +512,6 @@
     let docToHide = null;
 
     // Auth state
-    const ALLOWED_EMAILS = ["rianakhlulfadli@gmail.com", "lunadindaaa2220@gmail.com"];
     onAuthStateChanged(auth, async (user) => {
       if (user && !ALLOWED_EMAILS.includes(user.email)) {
         await signOut(auth);
