@@ -1,0 +1,105 @@
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+
+/* Overlay header */
+.overlay {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  padding: 0.9rem;
+  z-index: 2;
+  backdrop-filter: blur(5px);
+}
+
+.overlay h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+.overlay p { font-size: 1rem; }
+
+/* Gallery grid */
+.gallery {
+  margin-top: 120px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 1rem;
+}
+
+.thumb {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  animation: fadeIn 1s ease forwards;
+  opacity: 0;
+}
+
+.thumb:hover {
+  transform: scale(1.05);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.lightbox .close {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #4285f4;
+  color: white;
+  font-size: 32px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+
+  /* Tambahan penting */
+  z-index: 9999; /* pastikan tombol di atas semua elemen */
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  background-color: #3367d6;
+}

@@ -1,0 +1,269 @@
+ <title>Luminacc</title>
+<body>
+  <h1 class="title">💖 Memories 💖</h1>
+
+  <!-- Galeri Video (Carousel) -->
+  <section class="video-gallery">
+    <div class="carousel">
+      <div class="carousel-track" id="videoTrack">
+        <!-- Video akan di-generate otomatis lewat JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Tombol navigasi di luar video -->
+  <div class="carousel-controls">
+    <button class="carousel-btn prev">⟨</button>
+    <button class="carousel-btn next">⟩</button>
+  </div>
+
+  <!-- Timeline -->
+  <section class="timeline">
+    <div class="event">
+      <h3>Hari dimana kita Bertemu</h3>
+      <p>19 Januari 2025 — Hari itu senyum sederhana mengubah segalanya, meninggalkan jejak yang tak pernah hilang 💖</p>
+    </div>
+    <div class="event">
+      <h3>For you,dear</h3>
+      <p>19 Januari 2026 — Semoga langkahmu selalu diberkahi, hatimu dipenuhi ketenangan, dan hidupmu dipenuhi kebahagiaan ✨</p>
+    </div>
+  </section>
+
+  <!-- Pesan Rahasia -->
+  <button class="secret-btn" id="openModal">
+    Klik jika ingin tau
+  </button>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p> I LOVE YOU ANGRY BIRDS <ul>unek unek gua nih , gua sayang sama lu kocak. ko lu gamau sih sama gua anying ah gua bela bela in nentang bude lu malah pergi , sayang banget gua sama lu na tapi kayaknya lu udah move on dari gua , kayak nya emnag cuma gua yang tiap hari ngarep di chat sama lu " udah yah galau nya aku balik sayang" kayak nya cuma mimpi arrggghh. luna asu tapi gua sayang sama lu , love you na , web dari gua pake yah jangan di anggurin , udah bisa sv foto sama gua bikin buat lu bikin catatan harian mau nulis apa di sana bebas itu private juga ko , buat foto juga bisa di tambahin , tar gua tambahin yang belum gua masukin ke web, last na . Terima kasih pernah jadi alasan gua bahagia , love you so much</ul></p>
+    </div>
+  </div>
+
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #fff;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .video-gallery {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto 20px;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      background: #fff;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .carousel-item {
+      min-width: 100%;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    video {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      background: #000;
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .carousel-btn {
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-size: 24px;
+      border-radius: 50%;
+      transition: background 0.3s;
+    }
+
+    .carousel-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
+    .timeline {
+      margin: 30px auto;
+      max-width: 700px;
+      text-align: left;
+    }
+
+    .event {
+      background: #fff;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .secret-btn {
+      background: #ff4081;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.3s;
+    }
+
+    .secret-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .music-player {
+      margin-top: 30px;
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s;
+    }
+
+    .modal-content p {
+      font-size: 1.2em;
+      color: #ff4081;
+      font-weight: bold;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @media (max-width: 600px) {
+      .title { font-size: 2em; }
+      video { max-height: 300px; }
+      .carousel-btn { font-size: 20px; padding: 10px; }
+    }
+  </style>
+
+  <script>
+    const track = document.getElementById('videoTrack');
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    let index = 0;
+
+    // Generate 376 video items otomatis
+    const totalVideos = 106;
+    for (let i = 1; i <= totalVideos; i++) {
+      const item = document.createElement('div');
+      item.className = 'carousel-item';
+      item.innerHTML = `
+        <video controls>
+          <source src="mp4/${i}.mp4" type="video/mp4">
+          Browser kamu tidak mendukung video.
+        </video>`;
+      track.appendChild(item);
+    }
+
+    const items = document.querySelectorAll('.carousel-item');
+
+    function updateCarousel() {
+      track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      index = (index > 0) ? index - 1 : items.length - 1;
+      updateCarousel();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      index = (index < items.length - 1) ? index + 1 : 0;
+      updateCarousel();
+    });
+
+    // Musik otomatis play saat halaman dibuka
+    window.addEventListener('load', () => {
+      const music = document.getElementById('bgMusic');
+      music.play().catch(() => {
+        // Jika browser blok autoplay, musik tetap bisa diputar manual
+      });
+    });
+
+    // Modal logic
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("openModal");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+    
+  </script>
+</body>
